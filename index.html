@@ -1,0 +1,1538 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<meta name="theme-color" content="#0C1A2E">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="BridgePoint MGA">
+<title>BridgePoint MGA — Wholesale Insurance Platform</title>
+<link rel="manifest" href="./manifest.json">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=DM+Serif+Display&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --ink:#0C1A2E;--navy:#1B3A6B;--blue:#2563EB;--blt:#DBEAFE;--bdim:#EFF6FF;
+  --teal:#0D9488;--tlt:#CCFBF1;--green:#16A34A;--glt:#DCFCE7;
+  --amber:#D97706;--alt:#FEF3C7;--red:#DC2626;--rlt:#FEE2E2;
+  --purple:#7C3AED;--plt:#EDE9FE;--orange:#EA580C;--olt:#FFEDD5;
+  --cyan:#0891B2;--clt:#CFFAFE;--gold:#B45309;
+  --gray:#374151;--slate:#64748B;--muted:#94A3B8;--mid:#D1D5DB;
+  --bg:#F1F5F9;--srf:#FFFFFF;--srf2:#F8FAFC;
+  --font:'Inter',system-ui,sans-serif;--serif:'DM Serif Display',Georgia,serif;
+  --r:8px;--rl:14px;--rx:20px;
+  --sh:0 1px 3px rgba(0,0,0,.07),0 1px 2px rgba(0,0,0,.05);
+  --shm:0 4px 16px rgba(0,0,0,.1);--shl:0 8px 32px rgba(0,0,0,.14);
+}
+html{scroll-behavior:smooth}
+body{font-family:var(--font);background:var(--bg);color:var(--gray);min-height:100vh;font-size:14px;line-height:1.6}
+button{font-family:var(--font);cursor:pointer;border:none;outline:none;background:none}
+input,select,textarea{font-family:var(--font)}
+a{color:var(--blue);text-decoration:none}
+
+/* GATE */
+#gate{position:fixed;inset:0;background:var(--ink);z-index:9999;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:2rem}
+.g-logo{font-family:var(--serif);font-size:32px;color:#fff;margin-bottom:.5rem;display:flex;align-items:center;gap:12px}
+.g-logo svg{width:46px;height:46px}
+.g-tag{font-size:12.5px;color:rgba(255,255,255,.4);margin-bottom:2.5rem;letter-spacing:.03em}
+.g-grid{display:grid;grid-template-columns:repeat(3,230px);gap:14px}
+.g-card{background:rgba(255,255,255,.055);border:1px solid rgba(255,255,255,.1);border-radius:var(--rx);padding:1.75rem 1.5rem;cursor:pointer;transition:all .2s;text-align:center}
+.g-card:hover{background:rgba(255,255,255,.1);border-color:rgba(255,255,255,.24);transform:translateY(-2px);box-shadow:0 8px 32px rgba(0,0,0,.3)}
+.g-icon{width:50px;height:50px;border-radius:13px;margin:0 auto .875rem;display:flex;align-items:center;justify-content:center}
+.g-title{font-size:15px;font-weight:700;color:#fff;margin-bottom:4px}
+.g-sub{font-size:11.5px;color:rgba(255,255,255,.48);line-height:1.55}
+.g-pill{display:inline-block;font-size:9.5px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;padding:2px 8px;border-radius:10px;margin-top:8px}
+
+/* SHELL */
+#app{display:none;flex-direction:column;min-height:100vh}
+#app.on{display:flex}
+
+/* TOPBAR */
+.topbar{height:52px;background:var(--ink);display:flex;align-items:center;padding:0 1rem;gap:8px;position:sticky;top:0;z-index:200;box-shadow:0 2px 8px rgba(0,0,0,.28);flex-shrink:0}
+.tb-logo{font-family:var(--serif);font-size:16.5px;color:#fff;display:flex;align-items:center;gap:8px}
+.tb-logo svg{width:24px;height:24px}
+.m-chip{font-size:10px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;padding:3px 9px;border-radius:20px;margin-left:2px}
+.m-chip.mga{background:rgba(234,88,12,.4);color:#FED7AA}
+.m-chip.agent{background:rgba(124,58,237,.4);color:#DDD6FE}
+.m-chip.cust{background:rgba(37,99,235,.38);color:#BFDBFE}
+.tb-spacer{flex:1}
+.tbn{font-size:12px;font-weight:500;color:rgba(255,255,255,.62);padding:5px 10px;border-radius:6px;cursor:pointer;white-space:nowrap;transition:all .13s}
+.tbn:hover,.tbn.on{background:rgba(255,255,255,.12);color:#fff}
+.tb-user{font-size:11.5px;color:rgba(255,255,255,.65);background:rgba(255,255,255,.08);padding:3px 10px;border-radius:20px;margin-left:4px;white-space:nowrap;max-width:200px;overflow:hidden;text-overflow:ellipsis}
+
+/* LAYOUT */
+.sh-body{display:flex;flex:1;overflow:hidden}
+
+/* SIDEBAR */
+.sidebar{width:212px;background:var(--srf);border-right:1px solid var(--mid);display:flex;flex-direction:column;position:sticky;top:52px;height:calc(100vh - 52px);overflow-y:auto;flex-shrink:0}
+.sb-box{margin:.75rem;padding:11px 13px;background:linear-gradient(135deg,#0C1A2E,#1B3A6B);border-radius:var(--rl);color:#fff}
+.sb-box-lbl{font-size:9px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;opacity:.6;margin-bottom:2px}
+.sb-box-amt{font-family:var(--serif);font-size:21px;line-height:1}
+.sb-box-sub{font-size:10.5px;opacity:.5;margin-top:3px}
+.sb-sec{padding:.6rem .75rem .2rem;font-size:9.5px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;color:var(--muted)}
+.sb-item{display:flex;align-items:center;gap:8px;padding:7px 10px;border-radius:var(--r);margin:1px 6px;font-size:12.5px;font-weight:500;color:var(--slate);cursor:pointer;transition:all .13s}
+.sb-item:hover{background:var(--bg);color:var(--ink)}
+.sb-item.on{background:var(--bdim);color:var(--blue);font-weight:600}
+.sb-item svg{width:15px;height:15px;flex-shrink:0}
+.sb-badge{margin-left:auto;font-size:9.5px;font-weight:700;background:var(--red);color:#fff;border-radius:10px;padding:1px 6px;min-width:17px;text-align:center}
+.sb-badge.g{background:var(--green)}.sb-badge.a{background:var(--amber)}.sb-badge.p{background:var(--purple)}.sb-badge.c{background:var(--cyan)}
+.sb-div{height:1px;background:var(--mid);margin:.35rem .875rem}
+
+/* CONTENT */
+.content{flex:1;overflow-y:auto;padding:1.5rem;min-width:0}
+
+/* VIEWS */
+.view{display:none}
+.view.on{display:block;animation:fadeUp .2s ease}
+@keyframes fadeUp{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:translateY(0)}}
+
+/* TYPOGRAPHY */
+.pg-title{font-family:var(--serif);font-size:23px;color:var(--ink);font-weight:400;margin-bottom:.2rem}
+.pg-sub{font-size:13px;color:var(--slate);margin-bottom:1.25rem}
+
+/* CARDS */
+.card{background:var(--srf);border:1px solid var(--mid);border-radius:var(--rl);padding:1.125rem;margin-bottom:.875rem;box-shadow:var(--sh)}
+.card-hd{font-size:12.5px;font-weight:700;color:var(--ink);margin-bottom:.875rem;display:flex;align-items:center;justify-content:space-between;gap:8px}
+
+/* STAT GRID */
+.sg{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:9px;margin-bottom:1.125rem}
+.sc{background:var(--srf);border:1px solid var(--mid);border-radius:var(--rl);padding:.875rem 1rem;box-shadow:var(--sh)}
+.sc-lbl{font-size:10.5px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:3px}
+.sc-val{font-family:var(--serif);font-size:23px;color:var(--ink);line-height:1.1}
+.sc-d{font-size:11px;margin-top:3px}
+.sc-d.up{color:var(--green)}.sc-d.dn{color:var(--red)}.sc-d.neu{color:var(--muted)}
+
+/* BADGES */
+.badge{display:inline-flex;align-items:center;font-size:10px;font-weight:700;padding:2px 8px;border-radius:20px;white-space:nowrap;letter-spacing:.02em}
+.badge.new-app{background:#F0F9FF;color:#0369A1;border:1px solid #BAE6FD}
+.badge.submitted{background:#EFF6FF;color:#1D4ED8;border:1px solid #BFDBFE}
+.badge.marketing{background:var(--alt);color:#92400E;border:1px solid #FDE68A}
+.badge.quoted{background:var(--tlt);color:#0F766E;border:1px solid #99F6E4}
+.badge.offered{background:var(--plt);color:#5B21B6;border:1px solid #DDD6FE}
+.badge.bind-req{background:var(--olt);color:#9A3412;border:1px solid #FED7AA}
+.badge.bound{background:var(--glt);color:#166534;border:1px solid #BBF7D0}
+.badge.issued{background:#F0FDF4;color:#14532D;border:1px solid #86EFAC}
+.badge.active{background:var(--blt);color:#1E40AF;border:1px solid #BFDBFE}
+.badge.renewal{background:var(--plt);color:#5B21B6;border:1px solid #DDD6FE}
+.badge.cancelled{background:var(--rlt);color:#991B1B;border:1px solid #FECACA}
+.badge.preferred{background:var(--glt);color:#166534;border:1px solid #BBF7D0}
+.badge.standard{background:var(--blt);color:#1E40AF;border:1px solid #BFDBFE}
+.badge.substandard{background:var(--alt);color:#92400E;border:1px solid #FDE68A}
+.badge.decline{background:var(--rlt);color:#991B1B;border:1px solid #FECACA}
+.badge.paid{background:var(--glt);color:#166534;border:1px solid #BBF7D0}
+.badge.pending{background:var(--alt);color:#92400E;border:1px solid #FDE68A}
+
+/* TABLES */
+.tbl{width:100%;border-collapse:collapse}
+.tbl th{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);padding:7px 10px;border-bottom:1px solid var(--mid);text-align:left;white-space:nowrap}
+.tbl td{padding:8px 10px;border-bottom:1px solid #F1F5F9;font-size:12.5px;vertical-align:middle}
+.tbl tbody tr{cursor:pointer;transition:background .11s}
+.tbl tbody tr:hover td{background:var(--bg)}
+.tbl td.ra{text-align:right}
+.tbl-wrap{overflow-x:auto;border-radius:var(--rl)}
+.cn{font-weight:600;color:var(--ink)}
+.cm{font-size:11px;color:var(--muted)}
+
+/* MARKET CARDS */
+.mkt-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:10px;margin-bottom:.875rem}
+.mkt-card{border:2px solid var(--mid);border-radius:var(--rl);padding:.875rem;background:var(--srf);transition:all .16s;position:relative}
+.mkt-card.available:hover{border-color:var(--blue);box-shadow:var(--shm)}
+.mkt-card.selected-card{border-color:var(--green);background:#F0FDF4}
+.mkt-card.declined-card{border-color:var(--mid);background:var(--srf2);opacity:.55}
+.mkt-card.best-card{border-color:var(--green);border-width:2.5px}
+.best-tag{position:absolute;top:-10px;left:12px;background:var(--green);color:#fff;font-size:9.5px;font-weight:800;letter-spacing:.05em;padding:2px 8px;border-radius:10px}
+.mkt-hd{display:flex;align-items:center;gap:9px;margin-bottom:.5rem}
+.c-logo{width:33px;height:33px;border-radius:7px;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:11.5px;color:#fff;flex-shrink:0}
+.mkt-name{font-weight:700;color:var(--ink);font-size:13px}
+.mkt-type{font-size:10.5px;color:var(--muted)}
+.mkt-prem{font-family:var(--serif);font-size:21px;color:var(--green);margin:.375rem 0}
+.mkt-meta{font-size:11px;color:var(--slate);display:flex;flex-wrap:wrap;gap:0 10px}
+.mkt-foot{display:flex;align-items:center;justify-content:space-between;margin-top:.5rem;padding-top:.5rem;border-top:1px solid var(--mid)}
+
+/* CMP TABLE */
+.cmp-tbl{width:100%;border-collapse:collapse}
+.cmp-tbl th{padding:7px 10px;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);border-bottom:2px solid var(--mid);text-align:left}
+.cmp-tbl td{padding:8px 10px;border-bottom:1px solid #F1F5F9;font-size:12.5px;vertical-align:middle}
+.cmp-tbl .best-row td{background:#F0FDF4}
+.cmp-tbl .best-row td:first-child{border-left:3px solid var(--green)}
+
+/* DOC GRID */
+.doc-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:9px}
+.doc-card{background:var(--srf);border:1px solid var(--mid);border-radius:var(--r);padding:.75rem;cursor:pointer;transition:all .14s}
+.doc-card:hover{border-color:var(--blue);box-shadow:var(--shm);transform:translateY(-1px)}
+.doc-icon{width:32px;height:32px;border-radius:7px;margin-bottom:.45rem;display:flex;align-items:center;justify-content:center;font-size:16px}
+.doc-name{font-size:12px;font-weight:600;color:var(--ink);margin-bottom:2px;line-height:1.35}
+.doc-meta{font-size:10.5px;color:var(--muted)}
+.doc-tag{display:inline-block;font-size:9.5px;font-weight:700;padding:1px 6px;border-radius:10px;margin-top:4px}
+.doc-tag.quote{background:var(--alt);color:#92400E}
+.doc-tag.bind{background:var(--tlt);color:#0F766E}
+.doc-tag.policy{background:var(--glt);color:#166534}
+.doc-tag.invoice{background:var(--blt);color:#1E40AF}
+.doc-tag.bord{background:var(--plt);color:#5B21B6}
+.doc-tag.endorsement{background:var(--olt);color:#9A3412}
+
+/* BORD TABLE */
+.bord-tbl th{background:var(--ink);color:#fff;padding:6px 9px;font-size:10px;text-transform:uppercase;letter-spacing:.05em;font-weight:700}
+.bord-tbl td{padding:6px 9px;border-bottom:1px solid #F1F5F9;font-size:11.5px;vertical-align:middle}
+.bord-tbl tr:hover td{background:#FFF7ED}
+.bord-tbl .num{text-align:right;font-family:'Courier New',monospace;font-size:11px}
+.bord-total td{font-weight:700;background:var(--srf2);border-top:2px solid var(--mid);font-size:12px}
+
+/* FORMS */
+.fg{display:flex;flex-direction:column;gap:4px;margin-bottom:.7rem}
+label.fl{font-size:11.5px;font-weight:600;color:var(--gray)}
+input[type=text],input[type=email],input[type=date],input[type=number],input[type=tel],select,textarea{
+  width:100%;padding:0 11px;height:36px;border:1.5px solid var(--mid);border-radius:var(--r);
+  font-size:13px;color:var(--gray);background:var(--srf);transition:border-color .15s,box-shadow .15s}
+textarea{height:auto;padding:8px 11px;resize:vertical}
+input:focus,select:focus,textarea:focus{border-color:var(--blue);box-shadow:0 0 0 3px rgba(37,99,235,.1);outline:none}
+input.err,select.err{border-color:var(--red)!important}
+.ferr{font-size:11px;color:var(--red);display:none}
+.ferr.on{display:block}
+.fhint{font-size:11px;color:var(--muted)}
+.fr{display:grid;gap:.7rem}
+.fr.c2{grid-template-columns:1fr 1fr}
+.fr.c3{grid-template-columns:1fr 1fr 1fr}
+.fr.c4{grid-template-columns:1fr 1fr 1fr 1fr}
+
+/* BUTTONS */
+.btn{display:inline-flex;align-items:center;gap:6px;padding:7px 16px;border-radius:var(--r);font-size:12.5px;font-weight:600;cursor:pointer;transition:all .14s;font-family:var(--font);border:none}
+.btn:active{transform:scale(.98)}
+.btn-primary{background:var(--blue);color:#fff}.btn-primary:hover{background:#1D55D0}
+.btn-green{background:var(--green);color:#fff}.btn-green:hover{background:#15803D}
+.btn-purple{background:var(--purple);color:#fff}.btn-purple:hover{background:#6D28D9}
+.btn-teal{background:var(--teal);color:#fff}.btn-teal:hover{background:#0F766E}
+.btn-orange{background:var(--orange);color:#fff}.btn-orange:hover{background:#C2410C}
+.btn-outline{background:transparent;color:var(--ink);border:1.5px solid var(--mid)}.btn-outline:hover{border-color:var(--blue);color:var(--blue)}
+.btn-ghost{color:var(--slate);padding:7px 11px}.btn-ghost:hover{background:var(--bg);color:var(--ink)}
+.btn-sm{padding:5px 11px;font-size:12px}
+.btn-lg{padding:10px 24px;font-size:13.5px}
+.btn-row{display:flex;gap:7px;align-items:center;flex-wrap:wrap}
+
+/* INFO BOXES */
+.ibox{border-radius:var(--r);padding:9px 12px;font-size:12px;display:flex;gap:8px;align-items:flex-start;line-height:1.5;margin:.5rem 0}
+.ibox svg{width:14px;height:14px;flex-shrink:0;margin-top:2px}
+.ibox.blue{background:var(--bdim);color:#1E40AF;border:1px solid #BFDBFE}
+.ibox.green{background:var(--glt);color:#166534;border:1px solid #BBF7D0}
+.ibox.amber{background:var(--alt);color:#92400E;border:1px solid #FDE68A}
+.ibox.red{background:var(--rlt);color:#991B1B;border:1px solid #FECACA}
+.ibox.teal{background:var(--tlt);color:#134E4A;border:1px solid #99F6E4}
+.ibox.purple{background:var(--plt);color:#5B21B6;border:1px solid #DDD6FE}
+
+/* LIFECYCLE TRACK */
+.lc{display:flex;margin-bottom:1.125rem;border:1px solid var(--mid);border-radius:var(--rl);overflow:hidden;background:var(--srf)}
+.lc-step{flex:1;padding:7px 5px;text-align:center;border-right:1px solid var(--mid);min-width:0;transition:background .13s}
+.lc-step:last-child{border-right:none}
+.lc-step.done{background:#F0FDF4}
+.lc-step.on{background:var(--bdim)}
+.lc-step.pend{background:var(--srf2)}
+.lc-ic{font-size:13px;line-height:1;margin-bottom:2px}
+.lc-name{font-size:9.5px;font-weight:700;color:var(--ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.lc-step.done .lc-name{color:var(--green)}
+.lc-step.on .lc-name{color:var(--blue)}
+.lc-st{font-size:9px;color:var(--muted)}
+
+/* UW PANEL */
+.uw-panel{background:linear-gradient(135deg,#0C1A2E,#0D9488);border-radius:var(--rl);padding:1.125rem;color:#fff;margin-bottom:.875rem}
+.uw-badge{display:inline-block;font-size:9.5px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;padding:2px 9px;border-radius:20px;margin-bottom:.625rem}
+.uw-badge.ok{background:rgba(52,211,153,.2);border:1px solid rgba(52,211,153,.4);color:#6EE7B7}
+.uw-badge.ref{background:rgba(251,191,36,.2);border:1px solid rgba(251,191,36,.4);color:#FDE68A}
+.uw-badge.dec{background:rgba(239,68,68,.2);border:1px solid rgba(239,68,68,.4);color:#FCA5A5}
+.uw-prem{font-family:var(--serif);font-size:36px;line-height:1}
+.uw-code{font-size:10.5px;font-family:'Courier New',monospace;background:rgba(255,255,255,.12);padding:2px 9px;border-radius:4px;display:inline-block;margin-top:5px;letter-spacing:.04em}
+.uw-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:.625rem;margin-top:.875rem}
+.uw-item{background:rgba(255,255,255,.08);border-radius:7px;padding:.45rem .625rem}
+.uw-item .k{font-size:9.5px;opacity:.6;margin-bottom:1px}
+.uw-item .v{font-size:13.5px;font-weight:700}
+
+/* COMM HERO */
+.ch{background:linear-gradient(135deg,#0C1A2E,#1B3A6B 60%,#2D5A9E);color:#fff;border-radius:var(--rx);padding:1.125rem}
+.ch-lbl{font-size:9px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;opacity:.58;margin-bottom:2px}
+.ch-amt{font-family:var(--serif);font-size:32px;line-height:1}
+.ch-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:.75rem;margin-top:.875rem}
+.ch-item{background:rgba(255,255,255,.09);border-radius:9px;padding:.5rem .625rem;text-align:center}
+.ch-item .l{font-size:9.5px;opacity:.58;margin-bottom:1px}
+.ch-item .v{font-size:15px;font-weight:700}
+
+/* TIMELINE */
+.tl{padding-left:20px;position:relative}
+.tl::before{content:'';position:absolute;left:6px;top:4px;bottom:4px;width:1.5px;background:var(--mid)}
+.tl-item{position:relative;margin-bottom:.75rem}
+.tl-dot{position:absolute;left:-17px;top:4px;width:11px;height:11px;border-radius:50%;border:2px solid var(--srf);background:var(--mid)}
+.tl-dot.done{background:var(--green)}.tl-dot.on{background:var(--blue)}.tl-dot.warn{background:var(--amber)}
+.tl-date{font-size:10px;color:var(--muted);margin-bottom:1px}
+.tl-text{font-size:12.5px;color:var(--gray)}
+
+/* WIZARD */
+.wiz-bar{display:flex;gap:3px;margin-bottom:1.125rem}
+.wiz-seg{flex:1;height:3px;border-radius:2px;background:var(--mid);transition:background .23s}
+.wiz-seg.done{background:var(--green)}.wiz-seg.on{background:var(--blue)}
+.wiz-pane{display:none}
+.wiz-pane.on{display:block;animation:fadeUp .18s ease}
+.wiz-nav{display:flex;justify-content:space-between;align-items:center;margin-top:1.125rem;padding-top:.875rem;border-top:1px solid var(--mid)}
+
+/* MODAL */
+.modal-bg{display:none;position:fixed;inset:0;background:rgba(12,26,46,.65);z-index:800;align-items:center;justify-content:center;padding:1rem}
+.modal-bg.on{display:flex}
+.modal{background:var(--srf);border-radius:var(--rx);padding:1.625rem;width:100%;max-width:540px;box-shadow:var(--shl);animation:fadeUp .17s ease;max-height:90vh;overflow-y:auto}
+.modal.wide{max-width:800px}
+.modal-title{font-family:var(--serif);font-size:20px;color:var(--ink);margin-bottom:.2rem}
+.modal-sub{font-size:12.5px;color:var(--muted);margin-bottom:1.125rem}
+.modal-footer{display:flex;justify-content:flex-end;gap:8px;margin-top:1.125rem;padding-top:.875rem;border-top:1px solid var(--mid)}
+
+/* TABS */
+.tabs{display:flex;border-bottom:2px solid var(--mid);margin-bottom:1rem}
+.tab{padding:7px 14px;font-size:12.5px;font-weight:500;color:var(--muted);cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-2px;transition:all .12s}
+.tab:hover{color:var(--ink)}
+.tab.on{color:var(--blue);border-bottom-color:var(--blue);font-weight:600}
+
+/* CHIPS */
+.chips{display:flex;gap:6px;flex-wrap:wrap}
+.chip{padding:5px 12px;border:1.5px solid var(--mid);border-radius:6px;font-size:12px;font-weight:500;color:var(--gray);cursor:pointer;transition:all .12s;background:var(--srf)}
+.chip:hover{border-color:var(--blue);color:var(--blue)}
+.chip.on{border-color:var(--blue);background:var(--bdim);color:var(--navy);font-weight:600}
+
+/* COV ROWS */
+.cov-row{display:flex;align-items:center;padding:8px 0;border-bottom:1px solid #F1F5F9;gap:9px}
+.cov-row:last-child{border-bottom:none}
+.cov-info{flex:1}
+.cov-name{font-size:12.5px;font-weight:600;color:var(--ink)}
+.cov-desc{font-size:11px;color:var(--muted)}
+.cov-req{font-size:9px;background:var(--alt);color:#92400E;padding:1px 6px;border-radius:10px;font-weight:700}
+.cov-ctl{display:flex;align-items:center;gap:7px;flex-shrink:0}
+.cov-ctl select{height:29px;font-size:12px;padding:0 7px;min-width:100px;width:auto}
+.cov-price{font-size:12px;font-weight:600;color:var(--ink);min-width:48px;text-align:right}
+
+/* CHECK ROWS */
+.chk-row{display:flex;align-items:flex-start;gap:8px;padding:7px 10px;border:1.5px solid var(--mid);border-radius:var(--r);cursor:pointer;transition:border-color .12s;margin-bottom:6px}
+.chk-row:hover{border-color:var(--blue)}
+.chk-row.on{border-color:var(--blue);background:var(--bdim)}
+.chk-row input[type=checkbox]{width:14px;height:14px;accent-color:var(--blue);margin-top:3px;flex-shrink:0}
+.chk-txt strong{font-size:12.5px;display:block;color:var(--ink)}
+.chk-txt small{font-size:11px;color:var(--muted)}
+
+/* SLIDER */
+.sl-row{display:flex;align-items:center;gap:8px}
+input[type=range]{flex:1;accent-color:var(--blue)}
+.sl-val{font-size:12px;font-weight:600;color:var(--ink);min-width:68px;text-align:right;white-space:nowrap}
+
+/* OVERLAY */
+.overlay{display:none;position:fixed;inset:0;background:rgba(12,26,46,.78);z-index:900;flex-direction:column;align-items:center;justify-content:center;gap:12px}
+.overlay.on{display:flex}
+.spinner{width:42px;height:42px;border:3px solid rgba(255,255,255,.15);border-top-color:#60A5FA;border-radius:50%;animation:spin .7s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.ov-txt{color:#fff;font-size:13.5px;font-weight:500}
+.ov-sub{color:rgba(255,255,255,.48);font-size:12px}
+
+/* TOAST */
+.toast{position:fixed;bottom:20px;right:20px;background:var(--ink);color:#fff;padding:10px 15px;border-radius:var(--rl);font-size:12.5px;font-weight:500;z-index:9100;transform:translateY(120%);transition:transform .26s ease;max-width:320px;display:flex;align-items:center;gap:8px;box-shadow:var(--shl)}
+.toast.on{transform:translateY(0)}
+.toast.green{background:#166534}.toast.red{background:#991B1B}.toast.amber{background:#92400E}
+
+/* INSTALL BAR */
+.inst-bar{display:none;background:var(--navy);color:#fff;padding:8px 1rem;align-items:center;justify-content:space-between;font-size:12px;gap:8px;flex-shrink:0}
+.inst-bar.on{display:flex}
+.inst-bar .ib{background:#60A5FA;color:#0C3A6B;padding:4px 12px;border-radius:5px;font-weight:700;font-size:11.5px;cursor:pointer;font-family:var(--font);border:none}
+
+/* RESPONSIVE */
+@media(max-width:900px){.g-grid{grid-template-columns:1fr 1fr}.fr.c3,.fr.c4{grid-template-columns:1fr 1fr}.ch-grid,.uw-grid{grid-template-columns:1fr 1fr}}
+@media(max-width:640px){.g-grid{grid-template-columns:1fr}.sidebar{display:none}.fr.c2,.fr.c3,.fr.c4{grid-template-columns:1fr}.sg{grid-template-columns:1fr 1fr}.content{padding:1rem}.topbar .tbn{display:none}}
+@media print{.sidebar,.topbar,#gate,.overlay,.toast,.modal-bg,.btn-row,.wiz-nav,.inst-bar{display:none!important}.uw-panel,.ch{-webkit-print-color-adjust:exact;print-color-adjust:exact}}
+</style>
+</head>
+<body>
+
+<!-- GATE -->
+<div id="gate">
+  <div class="g-logo">
+    <svg viewBox="0 0 46 46" fill="none"><rect width="46" height="46" rx="11" fill="#2563EB"/><path d="M23 5L8 12V24C8 32.2 14.8 39.8 23 42C31.2 39.8 38 32.2 38 24V12L23 5Z" fill="white" opacity=".9"/><path d="M23 11L14 16V22C14 26.8 18 31.2 23 32.7C28 31.2 32 26.8 32 22V16L23 11Z" fill="#2563EB"/></svg>
+    BridgePoint MGA
+  </div>
+  <div class="g-tag">Wholesale Insurance Platform · FL ZIP 33545 · Personal Auto</div>
+  <div class="g-grid">
+    <div class="g-card" onclick="enterMode('mga')">
+      <div class="g-icon" style="background:rgba(234,88,12,.22)"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#FED7AA" stroke-width="1.8"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/><path d="M6 8h4M6 11h8"/></svg></div>
+      <div class="g-title">MGA / Wholesaler</div>
+      <div class="g-sub">Delegated UW · Multi-carrier marketing · Bordereaux · DMS · Compliance</div>
+      <div class="g-pill" style="background:rgba(234,88,12,.22);color:#FED7AA">MGA Desk</div>
+    </div>
+    <div class="g-card" onclick="enterMode('agent')">
+      <div class="g-icon" style="background:rgba(124,58,237,.22)"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#DDD6FE" stroke-width="1.8"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg></div>
+      <div class="g-title">Retail Agent</div>
+      <div class="g-sub">Submit applications · Receive MGA quotes · Bind · Commission dashboard</div>
+      <div class="g-pill" style="background:rgba(124,58,237,.22);color:#DDD6FE">Agent Portal</div>
+    </div>
+    <div class="g-card" onclick="enterMode('customer')">
+      <div class="g-icon" style="background:rgba(37,99,235,.22)"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#BFDBFE" stroke-width="1.8"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg></div>
+      <div class="g-title">Customer</div>
+      <div class="g-sub">Self-service quote · AI underwriting · TRS scoring · Instant result</div>
+      <div class="g-pill" style="background:rgba(37,99,235,.22);color:#BFDBFE">Self-Service</div>
+    </div>
+  </div>
+  <div style="margin-top:2rem;font-size:11px;color:rgba(255,255,255,.28)">FL ZIP 33545 · Pasco County · PRD v2.1 · Drivers 16–30</div>
+</div>
+
+<!-- OVERLAY + TOAST + INSTALL -->
+<div class="overlay" id="overlay"><div class="spinner"></div><div class="ov-txt" id="ovTxt">Processing…</div><div class="ov-sub" id="ovSub"></div></div>
+<div class="toast" id="toast"></div>
+<div class="inst-bar" id="instBar"><span>📱 Install BridgePoint MGA</span><button class="ib" id="instBtn">Install</button><button onclick="$$('instBar').classList.remove('on')" style="color:rgba(255,255,255,.5);font-size:18px;cursor:pointer">×</button></div>
+
+<!-- APP SHELL -->
+<div id="app">
+  <div class="inst-bar" id="instBar2" style="display:none"></div>
+  <header class="topbar">
+    <div class="tb-logo"><svg viewBox="0 0 24 24" fill="none"><rect width="24" height="24" rx="6" fill="#2563EB"/><path d="M12 3L6 6V11C6 14.5 8.6 17.7 12 18.8C15.4 17.7 18 14.5 18 11V6L12 3Z" fill="white" opacity=".9"/><path d="M12 7L9 8.5V11C9 12.8 10.3 14.4 12 15.1C13.7 14.4 15 12.8 15 11V8.5L12 7Z" fill="#2563EB"/></svg>BridgePoint MGA</div>
+    <span class="m-chip" id="mChip">MGA</span>
+    <div class="tb-spacer"></div>
+    <div id="mgaNav" style="display:none;gap:2px;display:none;align-items:center">
+      <button class="tbn on" onclick="nav('dashboard')">Dashboard</button>
+      <button class="tbn" onclick="nav('submissions')">Submissions</button>
+      <button class="tbn" onclick="nav('marketing')">Marketing</button>
+      <button class="tbn" onclick="nav('underwriting')">Underwriting</button>
+      <button class="tbn" onclick="nav('bordereaux')">Bordereaux</button>
+      <button class="tbn" onclick="nav('dms')">Documents</button>
+      <button class="tbn" onclick="nav('commission')">Commission</button>
+    </div>
+    <div id="agentNav" style="display:none;align-items:center;gap:2px">
+      <button class="tbn on" onclick="nav('a-dashboard')">Dashboard</button>
+      <button class="tbn" onclick="nav('a-new')">+ New Submission</button>
+      <button class="tbn" onclick="nav('a-pipeline')">Pipeline</button>
+      <button class="tbn" onclick="nav('a-commission')">Commission</button>
+    </div>
+    <div class="tb-user" id="tbUser"></div>
+    <button class="tbn" onclick="showGate()" style="margin-left:6px;font-size:11px;opacity:.5">⇄ Switch</button>
+  </header>
+
+  <div class="sh-body">
+    <!-- MGA SIDEBAR -->
+    <nav class="sidebar" id="mgaSb" style="display:none">
+      <div class="sb-box">
+        <div class="sb-box-lbl">MTD Net Premium</div>
+        <div class="sb-box-amt" id="sbAmt">$0</div>
+        <div class="sb-box-sub" id="sbSub">0 policies · $0 commission</div>
+      </div>
+      <div class="sb-sec">Workflow</div>
+      <div class="sb-item on" onclick="nav('dashboard')"><svg viewBox="0 0 20 20" fill="currentColor"><path d="M2 11a1 1 0 011-1h2a1 1 0 011 1v5a1 1 0 01-1 1H3a1 1 0 01-1-1v-5zm6-4a1 1 0 011-1h2a1 1 0 011 1v9a1 1 0 01-1 1H9a1 1 0 01-1-1V7zm6-3a1 1 0 011-1h2a1 1 0 011 1v12a1 1 0 01-1 1h-2a1 1 0 01-1-1V4z"/></svg>Dashboard</div>
+      <div class="sb-item" onclick="nav('submissions')"><svg viewBox="0 0 20 20" fill="currentColor"><path d="M9 2a1 1 0 000 2h2a1 1 0 100-2H9z"/><path fill-rule="evenodd" d="M4 5a2 2 0 012-2 3 3 0 003 3h2a3 3 0 003-3 2 2 0 012 2v11a2 2 0 01-2 2H6a2 2 0 01-2-2V5zm3 4a1 1 0 000 2h.01a1 1 0 100-2H7zm3 0a1 1 0 000 2h3a1 1 0 100-2h-3zm-3 4a1 1 0 100 2h.01a1 1 0 100-2H7zm3 0a1 1 0 100 2h3a1 1 0 100-2h-3z" clip-rule="evenodd"/></svg>All Submissions<span class="sb-badge a" id="sbSubCt">0</span></div>
+      <div class="sb-item" onclick="nav('marketing')"><svg viewBox="0 0 20 20" fill="currentColor"><path d="M3 1a1 1 0 000 2h1.22l.305 1.222a.997.997 0 00.01.042l1.358 5.43-.893.892C3.74 11.846 4.632 14 6.414 14H15a1 1 0 000-2H6.414l1-1H14a1 1 0 00.894-.553l3-6A1 1 0 0017 3H6.28l-.31-1.243A1 1 0 005 1H3z"/></svg>Market to Carriers<span class="sb-badge c" id="sbMktCt">0</span></div>
+      <div class="sb-item" onclick="nav('underwriting')"><svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M6.267 3.455a3.066 3.066 0 001.745-.723 3.066 3.066 0 013.976 0 3.066 3.066 0 001.745.723 3.066 3.066 0 012.812 2.812c.051.643.304 1.254.723 1.745a3.066 3.066 0 010 3.976 3.066 3.066 0 00-.723 1.745 3.066 3.066 0 01-2.812 2.812 3.066 3.066 0 00-1.745.723 3.066 3.066 0 01-3.976 0 3.066 3.066 0 00-1.745-.723 3.066 3.066 0 01-2.812-2.812 3.066 3.066 0 00-.723-1.745 3.066 3.066 0 010-3.976 3.066 3.066 0 00.723-1.745 3.066 3.066 0 012.812-2.812zm7.44 5.252a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/></svg>Underwriting<span class="sb-badge g" id="sbUwCt">0</span></div>
+      <div class="sb-div"></div>
+      <div class="sb-sec">Reporting</div>
+      <div class="sb-item" onclick="nav('bordereaux')"><svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M5 4a3 3 0 00-3 3v6a3 3 0 003 3h10a3 3 0 003-3V7a3 3 0 00-3-3H5zm-1 9v-1h5v2H5a1 1 0 01-1-1zm7 1h4a1 1 0 001-1v-1h-5v2zm0-4h5V8h-5v2zM9 8H4v2h5V8z" clip-rule="evenodd"/></svg>Bordereaux</div>
+      <div class="sb-item" onclick="nav('dms')"><svg viewBox="0 0 20 20" fill="currentColor"><path d="M4 4a2 2 0 012-2h4.586A2 2 0 0112 2.586L15.414 6A2 2 0 0116 7.414V16a2 2 0 01-2 2H6a2 2 0 01-2-2V4z"/></svg>Documents (DMS)</div>
+      <div class="sb-item" onclick="nav('commission')"><svg viewBox="0 0 20 20" fill="currentColor"><path d="M8.433 7.418c.155-.103.346-.196.567-.267v1.698a2.305 2.305 0 01-.567-.267C8.07 8.34 8 8.114 8 8c0-.114.07-.34.433-.582zM11 12.849v-1.698c.22.071.412.164.567.267.364.243.433.468.433.582 0 .114-.07.34-.433.582a2.305 2.305 0 01-.567.267z"/><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-13a1 1 0 10-2 0v.092a4.535 4.535 0 00-1.676.662C6.602 6.234 6 7.009 6 8c0 .99.602 1.765 1.324 2.246.48.32 1.054.545 1.676.662v1.941c-.391-.127-.68-.317-.843-.504a1 1 0 10-1.51 1.31c.562.649 1.413 1.076 2.353 1.253V15a1 1 0 102 0v-.092a4.535 4.535 0 001.676-.662C13.398 13.766 14 12.991 14 12c0-.99-.602-1.765-1.324-2.246A4.535 4.535 0 0011 9.092V7.151c.391.127.68.317.843.504a1 1 0 101.511-1.31c-.563-.649-1.413-1.076-2.354-1.253V5z" clip-rule="evenodd"/></svg>Commission<span class="sb-badge g" id="sbCommCt">0</span></div>
+      <div class="sb-div"></div>
+      <div class="sb-sec">Compliance</div>
+      <div class="sb-item" onclick="nav('compliance')"><svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 1.944A11.954 11.954 0 012.166 5C2.056 5.649 2 6.319 2 7c0 5.225 3.34 9.67 8 11.317C14.66 16.67 18 12.225 18 7c0-.682-.057-1.35-.166-2.001A11.954 11.954 0 0110 1.944zM11 14a1 1 0 11-2 0 1 1 0 012 0zm0-7a1 1 0 10-2 0v3a1 1 0 102 0V7z" clip-rule="evenodd"/></svg>Compliance Log</div>
+      <div class="sb-item" onclick="nav('renewals')"><svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M4 2a1 1 0 011 1v2.101a7.002 7.002 0 0111.601 2.566 1 1 0 11-1.885.666A5.002 5.002 0 005.999 7H9a1 1 0 010 2H4a1 1 0 01-1-1V3a1 1 0 011-1zm.008 9.057a1 1 0 011.276.61A5.002 5.002 0 0014.001 13H11a1 1 0 110-2h5a1 1 0 011 1v5a1 1 0 11-2 0v-2.101a7.002 7.002 0 01-11.601-2.566 1 1 0 01.61-1.276z" clip-rule="evenodd"/></svg>Renewals<span class="sb-badge p" id="sbRenewCt">0</span></div>
+    </nav>
+
+    <!-- AGENT SIDEBAR -->
+    <nav class="sidebar" id="agentSb" style="display:none">
+      <div class="sb-box">
+        <div class="sb-box-lbl">MTD Commission</div>
+        <div class="sb-box-amt" id="asbAmt">$0</div>
+        <div class="sb-box-sub" id="asbSub">0 active policies</div>
+      </div>
+      <div class="sb-sec">Workflow</div>
+      <div class="sb-item on" onclick="nav('a-dashboard')"><svg viewBox="0 0 20 20" fill="currentColor"><path d="M2 11a1 1 0 011-1h2a1 1 0 011 1v5a1 1 0 01-1 1H3a1 1 0 01-1-1v-5zm6-4a1 1 0 011-1h2a1 1 0 011 1v9a1 1 0 01-1 1H9a1 1 0 01-1-1V7zm6-3a1 1 0 011-1h2a1 1 0 011 1v12a1 1 0 01-1 1h-2a1 1 0 01-1-1V4z"/></svg>Dashboard</div>
+      <div class="sb-item" onclick="nav('a-new')"><svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clip-rule="evenodd"/></svg>New Submission</div>
+      <div class="sb-item" onclick="nav('a-pipeline')"><svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M3 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z" clip-rule="evenodd"/></svg>My Pipeline<span class="sb-badge a" id="asbPipe">0</span></div>
+      <div class="sb-div"></div>
+      <div class="sb-item" onclick="nav('a-commission')"><svg viewBox="0 0 20 20" fill="currentColor"><path d="M8.433 7.418c.155-.103.346-.196.567-.267v1.698a2.305 2.305 0 01-.567-.267C8.07 8.34 8 8.114 8 8c0-.114.07-.34.433-.582zM11 12.849v-1.698c.22.071.412.164.567.267.364.243.433.468.433.582 0 .114-.07.34-.433.582a2.305 2.305 0 01-.567.267z"/><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-13a1 1 0 10-2 0v.092a4.535 4.535 0 00-1.676.662C6.602 6.234 6 7.009 6 8c0 .99.602 1.765 1.324 2.246.48.32 1.054.545 1.676.662v1.941c-.391-.127-.68-.317-.843-.504a1 1 0 10-1.51 1.31c.562.649 1.413 1.076 2.353 1.253V15a1 1 0 102 0v-.092a4.535 4.535 0 001.676-.662C13.398 13.766 14 12.991 14 12c0-.99-.602-1.765-1.324-2.246A4.535 4.535 0 0011 9.092V7.151c.391.127.68.317.843.504a1 1 0 101.511-1.31c-.563-.649-1.413-1.076-2.354-1.253V5z" clip-rule="evenodd"/></svg>Commission</div>
+    </nav>
+
+    <div class="content" id="mainContent">
+      <!-- MGA DASHBOARD -->
+      <div class="view on" id="view-dashboard">
+        <div class="pg-title" id="mgaDashTitle">Good morning</div>
+        <div class="pg-sub">BridgePoint MGA · Wholesale Desk · FL ZIP 33545 Personal Auto</div>
+        <div class="sg" id="mgaStats"></div>
+        <div style="display:grid;grid-template-columns:1.6fr 1fr;gap:.875rem;margin-bottom:.875rem">
+          <div class="card" style="margin:0"><div class="card-hd">Active pipeline<button class="btn btn-sm btn-outline" onclick="nav('submissions')">View all</button></div><div class="tbl-wrap"><table class="tbl"><thead><tr><th>Insured / Agent</th><th>Stage</th><th>Markets</th><th>Best Quote</th><th>Action</th></tr></thead><tbody id="dashPipeBody"></tbody></table></div></div>
+          <div class="card" style="margin:0"><div class="card-hd">Commission snapshot</div><div id="dashCommSnap"></div></div>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:.875rem">
+          <div class="card" style="margin:0"><div class="card-hd">Renewals due — 30 days<span class="badge renewal" id="dashRenewCt">0 due</span></div><div id="dashRenewList"></div></div>
+          <div class="card" style="margin:0"><div class="card-hd">Recent bordereaux<button class="btn btn-sm btn-outline" onclick="nav('bordereaux')">View</button></div><div id="dashBordSnap"></div></div>
+        </div>
+      </div>
+
+      <!-- SUBMISSIONS -->
+      <div class="view" id="view-submissions">
+        <div class="pg-title">Submissions</div>
+        <div class="pg-sub">All applications received from retail agents across the full lifecycle.</div>
+        <div style="display:flex;gap:7px;margin-bottom:.875rem;flex-wrap:wrap;align-items:center">
+          <div class="chips" id="subFilterChips">
+            <button class="chip on" data-f="all" onclick="filterSubs(this)">All</button>
+            <button class="chip" data-f="new-app" onclick="filterSubs(this)">New App</button>
+            <button class="chip" data-f="submitted" onclick="filterSubs(this)">Submitted</button>
+            <button class="chip" data-f="marketing" onclick="filterSubs(this)">Marketing</button>
+            <button class="chip" data-f="quoted" onclick="filterSubs(this)">Quoted</button>
+            <button class="chip" data-f="offered" onclick="filterSubs(this)">Offered</button>
+            <button class="chip" data-f="bind-req" onclick="filterSubs(this)">Bind Request</button>
+            <button class="chip" data-f="bound" onclick="filterSubs(this)">Bound</button>
+            <button class="chip" data-f="issued" onclick="filterSubs(this)">Issued</button>
+          </div>
+          <button class="btn btn-primary btn-sm" onclick="openNewSubModal()" style="margin-left:auto">+ New Submission</button>
+          <button class="btn btn-outline btn-sm" onclick="openReportModal()">📊 Report</button>
+        </div>
+        <div class="card tbl-wrap" style="padding:0;overflow:auto">
+          <table class="tbl" id="subTable"><thead><tr><th>Insured / Agent</th><th>Sub #</th><th>Stage</th><th>Tier</th><th>Markets</th><th>Best Premium</th><th>MGA Comm</th><th>Eff Date</th><th></th></tr></thead><tbody id="subTableBody"></tbody></table>
+        </div>
+      </div>
+
+      <!-- MARKETING -->
+      <div class="view" id="view-marketing">
+        <div class="pg-title">Multi-Carrier Marketing</div>
+        <div class="pg-sub">Shop submissions across all appointed carriers simultaneously.</div>
+        <div id="mktContent"><div class="ibox blue"><svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a.75.75 0 000 1.5h.253a.25.25 0 01.244.304l-.459 2.066A1.75 1.75 0 0010.747 15H11a.75.75 0 000-1.5h-.253a.25.25 0 01-.244-.304l.459-2.066A1.75 1.75 0 009.253 9H9z" clip-rule="evenodd"/></svg><span>Select a submission from the pipeline to begin multi-carrier marketing. Click any row in Submissions to open the detail and marketing view.</span></div></div>
+      </div>
+
+      <!-- UNDERWRITING -->
+      <div class="view" id="view-underwriting">
+        <div class="pg-title">Delegated Underwriting</div>
+        <div class="pg-sub">Apply binding authority and UW decisions within delegated authority limits.</div>
+        <div class="ibox amber" style="margin-bottom:.875rem"><svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M8.485 2.495c.673-1.167 2.357-1.167 3.03 0l6.28 10.875c.673 1.167-.17 2.625-1.516 2.625H3.72c-1.347 0-2.189-1.458-1.515-2.625L8.485 2.495zM10 5a.75.75 0 01.75.75v3.5a.75.75 0 01-1.5 0v-3.5A.75.75 0 0110 5zm0 9a1 1 0 100-2 1 1 0 000 2z" clip-rule="evenodd"/></svg><span><strong>Delegated Authority:</strong> BridgePoint MGA operates under delegated binding authority from 4 carriers. Max single-risk: $500,000. All decisions logged per FL DFS compliance requirements.</span></div>
+        <div class="card"><div class="card-hd">Pending bind requests<span class="badge bind-req" id="uwPendCt">0</span></div><div id="uwPendList"></div></div>
+        <div class="card"><div class="card-hd">UW guidelines in effect</div>
+          <div class="tbl-wrap"><table class="tbl"><thead><tr><th>Rule</th><th>Parameter</th><th>Decision</th><th>Authority</th></tr></thead><tbody>
+            <tr><td>DUI within 5 yr</td><td>majorViol = DUI</td><td><span class="badge decline">Auto-Decline</span></td><td>All carriers</td></tr>
+            <tr><td>TRS &lt; 45 + at-fault</td><td>TRS &lt; 45 AND atFault ≥ 1</td><td><span class="badge decline">Auto-Decline</span></td><td>All carriers</td></tr>
+            <tr><td>SR-22 required</td><td>sr22 = true</td><td><span class="badge bind-req">Refer to UW</span></td><td>MGA review</td></tr>
+            <tr><td>Age ≤ 17, sport body</td><td>age ≤ 17 AND body = sport</td><td><span class="badge bind-req">Refer to UW</span></td><td>MGA review</td></tr>
+            <tr><td>Coverage gap &gt; 90 days</td><td>lapse &gt; 90 days</td><td><span class="badge bind-req">Refer to UW</span></td><td>MGA review</td></tr>
+            <tr><td>Preferred, clean record</td><td>TRS ≥ 85, 0 violations</td><td><span class="badge bound">Auto-Accept</span></td><td>Delegated</td></tr>
+            <tr><td>Standard tier</td><td>TRS 70–84, ≤ 1 minor viol</td><td><span class="badge bound">Auto-Accept</span></td><td>Delegated</td></tr>
+          </tbody></table></div>
+        </div>
+      </div>
+
+      <!-- BORDEREAUX -->
+      <div class="view" id="view-bordereaux">
+        <div class="pg-title">Bordereaux Reporting</div>
+        <div class="pg-sub">Premium, commission, and loss reporting for carrier reconciliation. FL DFS compliant.</div>
+        <div style="display:flex;gap:9px;margin-bottom:.875rem;flex-wrap:wrap;align-items:flex-end">
+          <div class="fg" style="margin:0;min-width:130px"><label class="fl">Period</label><select id="bordPeriod" onchange="renderBordereaux()"><option value="2025-06">June 2025</option><option value="2025-05">May 2025</option><option value="2025-04">April 2025</option><option value="2025-Q2">Q2 2025</option><option value="YTD">YTD 2025</option></select></div>
+          <div class="fg" style="margin:0;min-width:130px"><label class="fl">Carrier</label><select id="bordCarrier" onchange="renderBordereaux()"><option value="all">All Carriers</option><option value="lexington">Lexington Insurance</option><option value="landmark">Landmark Lloyd's</option><option value="security">Security National</option><option value="nationwide">Nationwide E&S</option></select></div>
+          <div class="btn-row"><button class="btn btn-outline btn-sm" onclick="exportBord('csv')">⬇ CSV</button><button class="btn btn-outline btn-sm" onclick="exportBord('excel')">⬇ Excel</button><button class="btn btn-purple btn-sm" onclick="exportBord('carrier')">📤 Submit to Carrier</button></div>
+        </div>
+        <div class="sg" id="bordStats" style="grid-template-columns:repeat(5,1fr)"></div>
+        <div class="tbl-wrap card" style="padding:0;overflow:auto">
+          <table class="tbl bord-tbl" id="bordTable"><thead><tr><th>Sub #</th><th>Policy #</th><th>Insured</th><th>Carrier</th><th>Eff Date</th><th>Exp Date</th><th class="num">Gross Prem</th><th class="num">MGA Comm%</th><th class="num">MGA Comm$</th><th class="num">Carrier Net</th><th>Status</th></tr></thead><tbody id="bordBody"></tbody><tfoot><tr class="bord-total" id="bordFoot"></tr></tfoot></table>
+        </div>
+        <div class="ibox teal" style="margin-top:.625rem"><svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a.75.75 0 000 1.5h.253a.25.25 0 01.244.304l-.459 2.066A1.75 1.75 0 0010.747 15H11a.75.75 0 000-1.5h-.253a.25.25 0 01-.244-.304l.459-2.066A1.75 1.75 0 009.253 9H9z" clip-rule="evenodd"/></svg><span>Bordereaux per FL DFS Rule 69O-186. All figures unaudited; subject to carrier reconciliation. Submission certifies accuracy per delegated authority agreement.</span></div>
+      </div>
+
+      <!-- DMS -->
+      <div class="view" id="view-dms">
+        <div class="pg-title">Document Management System</div>
+        <div class="pg-sub">All quote, bind, policy, invoice, endorsement, and bordereaux documents.</div>
+        <div style="display:flex;gap:9px;margin-bottom:.875rem;flex-wrap:wrap;align-items:flex-end">
+          <div class="fg" style="margin:0;flex:1;max-width:260px"><label class="fl">Search</label><input type="text" id="dmsSearch" placeholder="Policy #, insured, type…" oninput="renderDMS()"></div>
+          <div class="fg" style="margin:0;min-width:140px"><label class="fl">Type</label><select id="dmsType" onchange="renderDMS()"><option value="all">All Types</option><option value="quote">Quote Comparisons</option><option value="bind">Bind Confirmations</option><option value="policy">Policy Documents</option><option value="invoice">Invoices</option><option value="bord">Bordereaux</option><option value="endorsement">Endorsements</option></select></div>
+          <button class="btn btn-outline btn-sm" onclick="showToast('Upload dialog (production)','amber')">⬆ Upload</button>
+        </div>
+        <div class="doc-grid" id="dmsGrid"></div>
+      </div>
+
+      <!-- COMMISSION MGA -->
+      <div class="view" id="view-commission">
+        <div class="pg-title">MGA Commission Dashboard</div>
+        <div class="pg-sub">Net premium, ceding commissions, and agent profit-share.</div>
+        <div class="sg" id="commStats"></div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:.875rem">
+          <div class="card" style="margin:0"><div class="card-hd">By carrier</div><div id="commCarrierList"></div></div>
+          <div class="card" style="margin:0"><div class="card-hd">Agent profit-share</div><div id="commAgentList"></div></div>
+        </div>
+        <div class="card" style="margin-top:.875rem"><div class="card-hd">Commission register</div>
+          <div class="tbl-wrap"><table class="tbl" id="commTable"><thead><tr><th>Policy #</th><th>Insured</th><th>Carrier</th><th>Annual Prem</th><th>MGA Comm%</th><th>MGA Comm$</th><th>Agent Share</th><th>Status</th></tr></thead><tbody id="commBody"></tbody></table></div>
+        </div>
+      </div>
+
+      <!-- COMPLIANCE -->
+      <div class="view" id="view-compliance">
+        <div class="pg-title">Compliance Log</div>
+        <div class="pg-sub">Immutable FL DFS audit trail — all UW decisions, adverse actions, regulatory events.</div>
+        <div class="ibox blue" style="margin-bottom:.875rem"><svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 1.944A11.954 11.954 0 012.166 5C2.056 5.649 2 6.319 2 7c0 5.225 3.34 9.67 8 11.317C14.66 16.67 18 12.225 18 7c0-.682-.057-1.35-.166-2.001A11.954 11.954 0 0110 1.944zM11 14a1 1 0 11-2 0 1 1 0 012 0zm0-7a1 1 0 10-2 0v3a1 1 0 102 0V7z" clip-rule="evenodd"/></svg><span>All entries logged per FL §626.9641 and delegated authority agreement. Adverse action notices auto-generated within 30 days.</span></div>
+        <div class="tbl-wrap card" style="padding:0;overflow:auto"><table class="tbl" id="complianceTbl"><thead><tr><th>Date/Time</th><th>Sub #</th><th>Insured</th><th>Event</th><th>Decision</th><th>Authority</th><th>User</th></tr></thead><tbody id="complianceBody"></tbody></table></div>
+      </div>
+
+      <!-- RENEWALS -->
+      <div class="view" id="view-renewals">
+        <div class="pg-title">Renewals Due</div>
+        <div class="pg-sub">Policies expiring in the next 60 days. Re-market 45 days prior to expiry.</div>
+        <div class="tbl-wrap card" style="padding:0;overflow:auto"><table class="tbl"><thead><tr><th>Policy #</th><th>Insured</th><th>Carrier</th><th>Expiry</th><th>Current Prem</th><th>MGA Comm (Renewal)</th><th>TRS</th><th></th></tr></thead><tbody id="renewalBody"></tbody></table></div>
+      </div>
+
+      <!-- SUB DETAIL -->
+      <div class="view" id="view-sub-detail">
+        <button class="btn btn-ghost" onclick="nav('submissions')" style="margin-bottom:.875rem;padding-left:0">← Back to submissions</button>
+        <div id="subDetailContent"></div>
+      </div>
+
+      <!-- AGENT DASHBOARD -->
+      <div class="view" id="view-a-dashboard">
+        <div class="pg-title" id="agentDashTitle">Good morning</div>
+        <div class="pg-sub">Your submissions pipeline — quotes from BridgePoint MGA.</div>
+        <div class="sg" id="agentStats"></div>
+        <div class="card"><div class="card-hd">My pipeline<button class="btn btn-sm btn-primary" onclick="nav('a-new')">+ New submission</button></div>
+          <div class="tbl-wrap"><table class="tbl"><thead><tr><th>Insured</th><th>Stage</th><th>Best Quote</th><th>My Commission</th><th>Action</th></tr></thead><tbody id="agentPipeBody"></tbody></table></div>
+        </div>
+        <div class="card"><div class="card-hd">Quotes awaiting my decision</div><div id="agentOffers"></div></div>
+      </div>
+
+      <!-- AGENT NEW SUBMISSION -->
+      <div class="view" id="view-a-new">
+        <div class="pg-title">Submit New Application to BridgePoint MGA</div>
+        <div class="pg-sub">Complete the application — BridgePoint will market to 4 carriers and return quotes.</div>
+        <div class="wiz-bar" id="aWizBar"></div>
+        <div id="aWizContent"></div>
+      </div>
+
+      <!-- AGENT PIPELINE -->
+      <div class="view" id="view-a-pipeline">
+        <div class="pg-title">My Pipeline</div>
+        <div class="pg-sub">All submissions sent to BridgePoint MGA.</div>
+        <div class="tbl-wrap card" style="padding:0;overflow:auto"><table class="tbl"><thead><tr><th>Insured</th><th>Sub #</th><th>Stage</th><th>Best Quote</th><th>My Commission</th><th>Action</th></tr></thead><tbody id="agentFullBody"></tbody></table></div>
+      </div>
+
+      <!-- AGENT COMMISSION -->
+      <div class="view" id="view-a-commission">
+        <div class="pg-title">My Commission</div>
+        <div class="sg" id="aCommStats"></div>
+        <div class="card"><div class="card-hd">Commission register</div><div id="aCommList"></div></div>
+      </div>
+
+      <!-- CUSTOMER -->
+      <div class="view" id="view-customer"><div id="custContent"></div></div>
+
+    </div><!-- /content -->
+  </div><!-- /sh-body -->
+</div><!-- /app -->
+
+<!-- MODALS -->
+<div class="modal-bg" id="newSubModal">
+  <div class="modal">
+    <div class="modal-title">Create New Submission</div>
+    <div class="modal-sub">Received from retail agent — intake and route to underwriting.</div>
+    <div class="fr c2">
+      <div class="fg"><label class="fl">First name</label><input type="text" id="ns-fn" placeholder="Jordan"><div class="ferr" id="nse-fn">Required</div></div>
+      <div class="fg"><label class="fl">Last name</label><input type="text" id="ns-ln" placeholder="Smith"><div class="ferr" id="nse-ln">Required</div></div>
+      <div class="fg"><label class="fl">Date of birth</label><input type="date" id="ns-dob"><div class="ferr" id="nse-dob">Age 16–30 required</div></div>
+      <div class="fg"><label class="fl">Retail agent</label><select id="ns-agent"><option value="chen">Sarah Chen — Chen Insurance</option><option value="patel">Raj Patel — Patel Agency</option><option value="garcia">Maria Garcia — Garcia Ins</option><option value="johnson">Tom Johnson — Gulf Coast</option></select></div>
+      <div class="fg"><label class="fl">Body type</label><select id="ns-body"><option value="sedan">Sedan/Coupe</option><option value="suv">SUV/Crossover</option><option value="truck">Pickup Truck</option><option value="sport">Sport/High-Perf</option></select></div>
+      <div class="fg"><label class="fl">Est. ACV</label><select id="ns-acv"><option value="10000">Under $12k</option><option value="22000" selected>$12k–$26k</option><option value="30000">$26k–$35k</option><option value="42000">$35k–$50k</option></select></div>
+      <div class="fg"><label class="fl">At-fault accidents (3yr)</label><select id="ns-af"><option value="0">0</option><option value="1">1</option><option value="2">2+</option></select></div>
+      <div class="fg"><label class="fl">Major violations (5yr)</label><select id="ns-maj"><option value="none">None</option><option value="reckless">Reckless</option><option value="dui">DUI/DWI</option></select></div>
+      <div class="fg"><label class="fl">Credit band</label><select id="ns-credit"><option value="800">800+</option><option value="750">750–799</option><option value="700" selected>700–749</option><option value="650">650–699</option><option value="600">Below 650</option></select></div>
+      <div class="fg"><label class="fl">Annual miles</label><select id="ns-miles"><option value="8000">Under 8k</option><option value="12000" selected>8k–15k</option><option value="20000">15k–20k</option><option value="25000">20k+</option></select></div>
+      <div class="fg"><label class="fl">Telematics</label><select id="ns-telem"><option value="yes">Enrolled</option><option value="no">Traditional only</option></select></div>
+      <div class="fg"><label class="fl">TRS score (if known)</label><input type="number" id="ns-trs" placeholder="0–100" min="0" max="100"></div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeModal('newSubModal')">Cancel</button>
+      <button class="btn btn-primary" onclick="createSub()">Create &amp; market to carriers →</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-bg" id="bindModal">
+  <div class="modal">
+    <div class="modal-title">Confirm Bind &amp; Issue</div>
+    <div class="modal-sub">Binding under delegated authority. Policy will be issued immediately.</div>
+    <div id="bindSumContent"></div>
+    <div class="ibox green"><svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M16.704 4.153a.75.75 0 01.143 1.052l-8 10.5a.75.75 0 01-1.127.075l-4.5-4.5a.75.75 0 011.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 011.05-.143z" clip-rule="evenodd"/></svg><span>Commission of <strong id="bindCommDisp">$—</strong> will be logged to bordereaux. Compliance event recorded per delegated authority agreement.</span></div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeModal('bindModal')">Cancel</button>
+      <button class="btn btn-green" onclick="confirmBind()">Bind &amp; Issue Policy</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-bg" id="docModal">
+  <div class="modal wide">
+    <div class="modal-title" id="docModalTitle">Document</div>
+    <div class="modal-sub" id="docModalSub"></div>
+    <div id="docModalBody" style="background:var(--srf2);border:1px solid var(--mid);border-radius:var(--r);padding:1.25rem;min-height:180px;font-size:12px;font-family:'Courier New',monospace;line-height:1.8;white-space:pre-wrap;overflow:auto;max-height:55vh"></div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeModal('docModal')">Close</button>
+      <button class="btn btn-outline" onclick="showToast('Downloaded','green')">⬇ Download</button>
+      <button class="btn btn-primary" onclick="showToast('Sent to carrier','green')">📤 Send to Carrier</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-bg" id="reportModal">
+  <div class="modal">
+    <div class="modal-title">Generate Submission Report</div>
+    <div class="modal-sub">Export summary for management review or carrier audit.</div>
+    <div class="fr c2">
+      <div class="fg"><label class="fl">From date</label><input type="date" id="rpt-from"></div>
+      <div class="fg"><label class="fl">To date</label><input type="date" id="rpt-to"></div>
+      <div class="fg"><label class="fl">Format</label><select id="rpt-fmt"><option>PDF Summary</option><option>Excel Detail</option><option>CSV Raw</option><option>XML (ISO)</option></select></div>
+      <div class="fg"><label class="fl">Include</label><select id="rpt-inc"><option>All submissions</option><option>Bound only</option><option>Declined only</option></select></div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeModal('reportModal')">Cancel</button>
+      <button class="btn btn-primary" onclick="doReport()">Generate Report</button>
+    </div>
+  </div>
+</div>
+<script>
+'use strict';
+// ═══ ACTUARIAL ENGINE (PRD v2.1 FL ZIP 33545) ═══
+const BLC={bi25:473.60,bi10:369.01,bi50:618.89,bi100:780,pd25:254.77,pd10:216.64,pd50:304,pip_f:602.01,pip_m:476.44,um25:232.04,um10:172.54,comp:174.98,coll500:404.67,coll250:490,coll1000:315.37,coll2500:218};
+const AF_BI={16:2.35,17:2.18,18:2.00,19:1.82,20:1.68,21:1.55,22:1.42,23:1.30,24:1.20,25:1.12,26:1.08,27:1.08,28:1.02,29:1.02,30:1.02};
+const AF_PD={16:2.15,17:2.00,18:1.88,19:1.74,20:1.60,21:1.48,22:1.35,23:1.24,24:1.15,25:1.08,26:1.05,27:1.05,28:1.00,29:1.00,30:1.00};
+const AF_PP={16:2.10,17:1.95,18:1.82,19:1.68,20:1.55,21:1.42,22:1.30,23:1.20,24:1.12,25:1.06,26:1.03,27:1.03,28:1.00,29:1.00,30:1.00};
+const AF_CL={16:2.50,17:2.30,18:2.12,19:1.95,20:1.80,21:1.65,22:1.50,23:1.38,24:1.26,25:1.16,26:1.10,27:1.10,28:1.04,29:1.04,30:1.04};
+const AF_CO={16:1.90,17:1.78,18:1.65,19:1.52,20:1.42,21:1.32,22:1.22,23:1.14,24:1.08,25:1.04,26:1.02,27:1.02,28:1.00,29:1.00,30:1.00};
+const TBI=[0.72,0.78,0.85,0.92,1.00,1.22,1.50],TPD=[0.74,0.80,0.87,0.93,1.00,1.20,1.45];
+const TPP=[0.78,0.82,0.88,0.94,1.00,1.18,1.40],TCL=[0.70,0.76,0.83,0.90,1.00,1.25,1.55];
+const TCO=[0.85,0.88,0.91,0.95,1.00,1.08,1.15];
+const CF={800:0.85,750:0.92,700:1.00,650:1.15,600:1.35,500:1.55};
+const MFT={4999:0.88,7999:0.94,11999:1.00,14999:1.09,19999:1.20,99999:1.38};
+const BF={sedan:1.00,suv:1.05,truck:1.08,sport:1.35,minivan:1.02,electric:1.20};
+const ACV_SYM={10000:6,15000:8,22000:12,30000:16,42000:20,58000:24,75000:28};
+function trsI(t){if(!t&&t!==0)return 4;if(t>=95)return 0;if(t>=90)return 1;if(t>=85)return 2;if(t>=78)return 3;if(t>=70)return 4;if(t>=60)return 5;return 6;}
+function mfGet(m){for(const k of[4999,7999,11999,14999,19999,99999])if(m<=k)return MFT[k];return MFT[99999];}
+function calcTRS(sp,br,ni,ph,mi){
+  const ns=Math.max(0,100-(sp/0.30)*100),nb=Math.max(0,100-(br/12)*100),
+        nn=Math.max(0,100-(ni/0.35)*100),nm=Math.max(0,100-((mi-5000)/15000)*100),
+        np=Math.max(0,100-(ph/0.40)*100);
+  return Math.max(0,Math.min(100,ns*0.25+nb*0.20+nn*0.15+nm*0.15+np*0.15+nm*0.10));
+}
+function ratePolicy(p){
+  const{age=19,atFault=0,minorV=0,majorV='none',goodStud=false,defDrive=false,sr22=false,
+        credit=700,miles=12000,body='sedan',acv=22000,telem=true,trs=null,
+        biLim=25,pdLim=25,pipOpt='full',umOpt='25',compOpt=500,collOpt=500,mgaComm=15,agentSplit=12}=p;
+  const sym=ACV_SYM[acv]||12,bf2=BF[body]||1;
+  const sf=(sym<=5?0.78:sym<=10?0.92:sym<=15?1.00:sym<=20?1.18:sym<=25?1.38:1.65);
+  const cfv=(sym<=5?0.72:sym<=10?0.88:sym<=15?1.00:sym<=20?1.15:sym<=25?1.32:1.58);
+  const vCL=sf*bf2,vCO=cfv*(body==='electric'?1.2:1);
+  let hB=1,hP=1,hI=1,hL=1,hO=1,hU=1;
+  if(atFault>=1){hB*=1.42;hP*=1.38;hI*=1.25;hL*=1.48;hO*=1.12;hU*=1.35;}
+  if(atFault>=2){hB*=1.85;hP*=1.78;hI*=1.60;hL*=1.92;hO*=1.35;hU*=1.72;}
+  if(minorV>=1){hB*=1.18;hP*=1.15;hI*=1.10;hL*=1.20;hO*=1.05;hU*=1.15;}
+  if(minorV>=2){hB*=1.38;hP*=1.32;hI*=1.25;hL*=1.40;hO*=1.10;hU*=1.30;}
+  if(majorV==='reckless'){hB*=1.95;hP*=1.85;hI*=1.75;hL*=2.05;hO*=1.55;hU*=1.90;}
+  if(majorV==='dui'){hB*=2.40;hP*=2.20;hI*=2.10;hL*=2.50;hO*=1.80;hU*=2.40;}
+  if(goodStud){hB*=0.92;hP*=0.92;hI*=0.95;hL*=0.93;hO*=0.96;}
+  if(defDrive){hB*=0.95;hP*=0.95;hI*=0.95;hL*=0.97;hO*=0.97;}
+  if(sr22){hB*=1.35;hP*=1.30;hI*=1.25;hL*=1.40;hO*=1.20;}
+  const lcm=telem?1.439:1.471,ti=trsI(trs);
+  const biB=biLim===10?BLC.bi10:biLim===25?BLC.bi25:biLim===50?BLC.bi50:BLC.bi100;
+  const pdB=pdLim===10?BLC.pd10:pdLim===25?BLC.pd25:BLC.pd50;
+  const clB=collOpt===250?BLC.coll250:collOpt===500?BLC.coll500:collOpt===1000?BLC.coll1000:BLC.coll2500;
+  const clD=collOpt===250?1.12:collOpt===500?1.00:collOpt===1000?0.82:0.58;
+  const c=(base,af,h,vf,cr,mf2,tf)=>base*af*h*vf*cr*mf2*(telem?tf:1)*lcm;
+  const bi=c(biB,AF_BI[age]||1,hB,1,CF[credit]||1,mfGet(miles),TBI[ti]);
+  const pd=c(pdB,AF_PD[age]||1,hP,1,1,mfGet(miles),TPD[ti]);
+  const pip=c(pipOpt==='full'?BLC.pip_f:BLC.pip_m,AF_PP[age]||1,hI,1,1,1,TPP[ti]);
+  const um=umOpt==='none'?0:c(umOpt==='10'||umOpt===10?BLC.um10:BLC.um25,AF_PP[age]||1,hU,1,1,mfGet(miles),TPP[ti]);
+  const comp=compOpt==='none'?0:c(BLC.comp,AF_CO[age]||1,hO,vCO,CF[credit]||1,mfGet(miles),TCO[ti]);
+  const coll=collOpt==='none'?0:c(clB,AF_CL[age]||1,hL,vCL*clD,CF[credit]||1,mfGet(miles),TCL[ti]);
+  const pure=bi+pd+pip+um+comp+coll,tax=pure*0.0175,fees=79;
+  const total=Math.round(pure+tax+fees);
+  const mgaCA=Math.round(total*(mgaComm/100)),agCA=Math.round(total*(agentSplit/100));
+  let tier='Standard';
+  if(trs>=85&&atFault===0&&majorV==='none')tier='Preferred';
+  else if(trs<70||atFault>=2||majorV==='reckless')tier='Substandard';
+  if(majorV==='dui')tier='Decline';
+  if(tier==='Standard'&&trs>=88)tier='Preferred';
+  if(tier==='Substandard'&&trs>=92)tier='Standard';
+  if(tier==='Preferred'&&trs<68)tier='Standard';
+  if(tier==='Standard'&&trs<58)tier='Substandard';
+  const decision=majorV==='dui'?'Decline':(trs<45&&atFault>=1)?'Decline':(atFault>=2&&minorV>=2)?'Refer':'Accept';
+  const ab=age<=18?'Y1':age<=21?'Y2':age<=25?'Y3':'Y4';
+  const mb=miles<8000?'LO':miles<=15000?'MID':'HI';
+  const tb=!trs&&trs!==0?'TPROX':trs>=95?'T95+':trs>=85?'T85-94':trs>=78?'T78-84':trs>=70?'T70-77':trs>=60?'T60-69':'TLO';
+  const tc=tier==='Preferred'?'PREF':tier==='Substandard'?'NSR':'STD';
+  return{bi,pd,pip,um,comp,coll,pure,tax,fees,total,tier,decision,trs,
+         classCode:`${ab}-${tc}-${(body||'sedan').toUpperCase().slice(0,5)}-${mb}-${tb}`,
+         mgaCA,agCA,mgaComm,agentSplit};
+}
+
+// ═══ CARRIERS ═══
+const CARRIERS=[
+  {id:'lexington',name:'Lexington Insurance',type:'Admitted E&S',logo:'LX',color:'#1B3A6B',mgaComm:15,appetite:'All tiers'},
+  {id:'landmark',name:"Landmark Lloyd's",type:"Lloyd's Syndicate",logo:'LL',color:'#0F766E',mgaComm:17.5,appetite:'Preferred & Standard only'},
+  {id:'security',name:'Security National',type:'Non-Admitted Surplus',logo:'SN',color:'#7C3AED',mgaComm:20,appetite:'All tiers incl. high-risk'},
+  {id:'nationwide',name:'Nationwide E&S',type:'Surplus Lines',logo:'NW',color:'#D97706',mgaComm:12,appetite:'Preferred only, TRS>80'},
+];
+function carrierQuote(carrier,r,subId){
+  const loads={lexington:1.00,landmark:0.95,security:1.08,nationwide:0.92};
+  if(carrier.id==='landmark'&&r.tier==='Substandard')return{declined:true,reason:'Outside appetite — Substandard risk'};
+  if(carrier.id==='nationwide'&&r.tier!=='Preferred')return{declined:true,reason:'Preferred only appetite'};
+  if(carrier.id==='nationwide'&&(r.trs||72)<80)return{declined:true,reason:'TRS below minimum (80)'};
+  const prem=Math.round(r.total*(loads[carrier.id]||1));
+  const comm=Math.round(prem*(carrier.mgaComm/100));
+  return{carrierId:carrier.id,carrierName:carrier.name,prem,comm,commPct:carrier.mgaComm,
+         net:prem-comm,tier:r.tier,classCode:r.classCode,declined:false,
+         effDate:fDate(15),expDate:fDate(380),
+         qNum:`QT-${carrier.id.toUpperCase().slice(0,3)}-${subId}-${Math.floor(Math.random()*9000+1000)}`};
+}
+
+// ═══ STATE ═══
+let S={mode:'mga',mgaUser:'Victoria Chen, CPCU',agentUser:'Sarah Chen — Chen Insurance Group',
+       bindPend:null,subs:[],docs:[],compLog:[]};
+
+function seedData(){
+  const d=(n)=>fDate(n);
+  S.subs=[
+    {id:'SUB-2025-001',ins:'Jordan M.',agent:'chen',age:18,body:'sedan',acv:22000,atFault:0,minorV:0,majorV:'none',credit:700,miles:8500,telem:true,trs:92,stage:'issued',selCarrier:'lexington',selQ:{carrierId:'lexington',carrierName:'Lexington Insurance',prem:3878,comm:582,commPct:15,net:3296,tier:'Preferred',classCode:'Y1-PREF-SEDAN-LO-T85-94',effDate:d(-120),expDate:d(245),qNum:'QT-LEX-001-4821',declined:false},polNum:'POL-FL-33545-001',effDate:d(-120),expDate:d(245),cqs:[]},
+    {id:'SUB-2025-002',ins:'Alex T.',agent:'patel',age:22,body:'suv',acv:30000,atFault:0,minorV:1,majorV:'none',credit:650,miles:13200,telem:true,trs:75,stage:'active',selCarrier:'lexington',selQ:{carrierId:'lexington',carrierName:'Lexington Insurance',prem:5438,comm:816,commPct:15,net:4622,tier:'Standard',classCode:'Y3-STD-SUV-MID-T70-77',effDate:d(-60),expDate:d(305),qNum:'QT-LEX-002-3912',declined:false},polNum:'POL-FL-33545-002',effDate:d(-60),expDate:d(305),cqs:[]},
+    {id:'SUB-2025-003',ins:'Morgan K.',agent:'garcia',age:17,body:'sport',acv:22000,atFault:0,minorV:1,majorV:'none',credit:500,miles:16500,telem:true,trs:58,stage:'offered',selCarrier:null,selQ:null,polNum:null,effDate:null,expDate:null,cqs:[{carrierId:'security',carrierName:'Security National',prem:9420,comm:1884,commPct:20,net:7536,tier:'Substandard',classCode:'Y1-NSR-SPORT-HI-TLO',effDate:d(15),expDate:d(380),qNum:'QT-SEC-003-7741',declined:false},{carrierId:'lexington',carrierName:'Lexington Insurance',prem:10280,comm:1542,commPct:15,net:8738,tier:'Substandard',classCode:'Y1-NSR-SPORT-HI-TLO',effDate:d(15),expDate:d(380),qNum:'QT-LEX-003-5502',declined:false}]},
+    {id:'SUB-2025-004',ins:'Riley S.',agent:'johnson',age:25,body:'truck',acv:30000,atFault:0,minorV:0,majorV:'none',credit:750,miles:18000,telem:false,trs:null,stage:'marketing',selCarrier:null,selQ:null,polNum:null,effDate:null,expDate:null,cqs:[]},
+    {id:'SUB-2025-005',ins:'Cameron B.',agent:'chen',age:20,body:'sedan',acv:22000,atFault:0,minorV:0,majorV:'none',credit:700,miles:11000,telem:true,trs:80,stage:'bind-req',selCarrier:'landmark',selQ:{carrierId:'landmark',carrierName:"Landmark Lloyd's",prem:3706,comm:648,commPct:17.5,net:3058,tier:'Standard',classCode:'Y2-STD-SEDAN-MID-T78-84',effDate:d(5),expDate:d(370),qNum:'QT-LAN-005-2233',declined:false},polNum:null,effDate:null,expDate:null,cqs:[]},
+    {id:'SUB-2025-006',ins:'Taylor W.',agent:'patel',age:24,body:'suv',acv:22000,atFault:0,minorV:0,majorV:'none',credit:800,miles:9000,telem:true,trs:88,stage:'renewal',selCarrier:'landmark',selQ:{carrierId:'landmark',carrierName:"Landmark Lloyd's",prem:3240,comm:567,commPct:17.5,net:2673,tier:'Preferred',classCode:'Y3-PREF-SUV-LO-T85-94',effDate:d(-355),expDate:d(10),qNum:'QT-LAN-006-1187',declined:false},polNum:'POL-FL-33545-006',effDate:d(-355),expDate:d(10),cqs:[]},
+    {id:'SUB-2025-007',ins:'Jesse P.',agent:'garcia',age:19,body:'sedan',acv:22000,atFault:0,minorV:0,majorV:'none',credit:700,miles:12000,telem:true,trs:78,stage:'new-app',selCarrier:null,selQ:null,polNum:null,effDate:null,expDate:null,cqs:[]},
+    {id:'SUB-2025-008',ins:'Avery D.',agent:'johnson',age:27,body:'sedan',acv:15000,atFault:0,minorV:0,majorV:'none',credit:800,miles:7500,telem:true,trs:96,stage:'quoted',selCarrier:null,selQ:null,polNum:null,effDate:null,expDate:null,cqs:[{carrierId:'landmark',carrierName:"Landmark Lloyd's",prem:2450,comm:429,commPct:17.5,net:2021,tier:'Preferred',classCode:'Y4-PREF-SEDAN-LO-T95+',effDate:d(10),expDate:d(375),qNum:'QT-LAN-008-8834',declined:false},{carrierId:'nationwide',carrierName:'Nationwide E&S',prem:2248,comm:270,commPct:12,net:1978,tier:'Preferred',classCode:'Y4-PREF-SEDAN-LO-T95+',effDate:d(10),expDate:d(375),qNum:'QT-NWE-008-6621',declined:false}]},
+  ];
+  S.docs=[];
+  S.subs.filter(s=>isActive(s.stage)&&s.selQ).forEach(s=>{
+    S.docs.push(
+      {id:'DOC-'+s.id+'-Q',type:'quote',name:'Quote Comparison — '+s.ins,sub:s.id,pol:s.polNum,date:rDate(-10),size:'142 KB',carrier:s.selQ.carrierName},
+      {id:'DOC-'+s.id+'-B',type:'bind',name:'Bind Confirmation — '+s.polNum,sub:s.id,pol:s.polNum,date:rDate(-8),size:'88 KB',carrier:s.selQ.carrierName},
+      {id:'DOC-'+s.id+'-P',type:'policy',name:'Policy Document — '+s.polNum,sub:s.id,pol:s.polNum,date:rDate(-7),size:'312 KB',carrier:s.selQ.carrierName},
+      {id:'DOC-'+s.id+'-I',type:'invoice',name:'Premium Invoice — '+s.polNum,sub:s.id,pol:s.polNum,date:rDate(-6),size:'54 KB',carrier:s.selQ.carrierName}
+    );
+  });
+  S.docs.push({id:'DOC-BORD-MAY',type:'bord',name:'Bordereaux — May 2025',sub:'ALL',pol:'ALL',date:rDate(-2),size:'28 KB',carrier:'All Carriers'});
+  S.docs.push({id:'DOC-BORD-APR',type:'bord',name:'Bordereaux — April 2025',sub:'ALL',pol:'ALL',date:rDate(-32),size:'26 KB',carrier:'All Carriers'});
+  S.compLog=[
+    {ts:'2025-06-20 09:14',sub:'SUB-2025-001',ins:'Jordan M.',event:'Policy Issued',decision:'Accept — Delegated Authority',auth:'MGA',user:'Victoria Chen'},
+    {ts:'2025-06-18 14:22',sub:'SUB-2025-002',ins:'Alex T.',event:'Policy Bound',decision:'Accept — Delegated Authority',auth:'MGA',user:'Victoria Chen'},
+    {ts:'2025-06-15 11:05',sub:'SUB-2025-003',ins:'Morgan K.',event:'UW Review — Substandard',decision:'Refer to Security National',auth:'Carrier',user:'Victoria Chen'},
+    {ts:'2025-06-14 16:48',sub:'SUB-2025-005',ins:'Cameron B.',event:'Bind Request Received',decision:'Pending MGA confirmation',auth:'MGA',user:'Victoria Chen'},
+    {ts:'2025-06-10 10:30',sub:'SUB-2025-008',ins:'Avery D.',event:'Quotes — 2 markets',decision:'Offered to retail agent',auth:'MGA',user:'Victoria Chen'},
+  ];
+}
+
+// ═══ HELPERS ═══
+function $$(id){return document.getElementById(id);}
+function fmtC(n){if(!n&&n!==0)return'—';return new Intl.NumberFormat('en-US',{style:'currency',currency:'USD',minimumFractionDigits:0,maximumFractionDigits:0}).format(Math.round(n));}
+function cap(s){return s?s[0].toUpperCase()+s.slice(1):'';}
+function fDate(d){const dt=new Date();dt.setDate(dt.getDate()+d);return dt.toISOString().slice(0,10);}
+function rDate(d){return fDate(d);}
+function isoNow(){return new Date().toISOString().slice(0,16).replace('T',' ');}
+function stageLabel(s){const m={'new-app':'New App',submitted:'Submitted',marketing:'Marketing',quoted:'Quoted',offered:'Offered','bind-req':'Bind Request',bound:'Bound',issued:'Issued',active:'Active',renewal:'Renewal',cancelled:'Cancelled'};return m[s]||cap(s);}
+function isActive(s){return['bound','active','issued','renewal'].includes(s);}
+function agentName(id){return{chen:'Sarah Chen',patel:'Raj Patel',garcia:'Maria Garcia',johnson:'Tom Johnson'}[id]||id;}
+function showToast(msg,type=''){const t=$$('toast');t.textContent=msg;t.className='toast on '+(type||'');setTimeout(()=>t.classList.remove('on'),3200);}
+function showOv(txt,sub=''){$$('ovTxt').textContent=txt;$$('ovSub').textContent=sub;$$('overlay').classList.add('on');}
+function hideOv(){$$('overlay').classList.remove('on');}
+function openModal(id){$$(id).classList.add('on');}
+function closeModal(id){$$(id).classList.remove('on');}
+function mgaCommTotal(){return S.subs.filter(s=>isActive(s.stage)&&s.selQ).reduce((a,s)=>a+(s.selQ.comm||0),0);}
+
+// ═══ NAV ═══
+function nav(v){
+  document.querySelectorAll('.view').forEach(el=>el.classList.remove('on'));
+  const t=$$('view-'+v);if(t)t.classList.add('on');
+  document.querySelectorAll('.tbn').forEach(b=>{b.classList.toggle('on',(b.getAttribute('onclick')||'').includes("'"+v+"'"));});
+  document.querySelectorAll('.sb-item').forEach(b=>{b.classList.toggle('on',(b.getAttribute('onclick')||'').includes("'"+v+"'"));});
+  const fns={dashboard:renderMGADash,submissions:renderSubs,marketing:()=>{},
+              underwriting:renderUW,bordereaux:renderBordereaux,dms:renderDMS,
+              commission:renderMGAComm,compliance:renderCompliance,renewals:renderRenewals,
+              'a-dashboard':renderAgentDash,'a-new':renderAgentNew,'a-pipeline':renderAgentPipeline,'a-commission':renderAgentComm};
+  if(fns[v])fns[v]();
+}
+
+// ═══ MGA DASHBOARD ═══
+function renderMGADash(){
+  const hr=new Date().getHours();
+  $$('mgaDashTitle').textContent=(hr<12?'Good morning':hr<17?'Good afternoon':'Good evening')+', Victoria';
+  const active=S.subs.filter(s=>isActive(s.stage)),pend=S.subs.filter(s=>['new-app','submitted','marketing','quoted','offered','bind-req'].includes(s.stage));
+  const mtdPrem=active.reduce((a,s)=>a+(s.selQ?.prem||0),0),mtdComm=mgaCommTotal();
+  $$('mgaStats').innerHTML=`
+    <div class="sc"><div class="sc-lbl">MTD Net Premium</div><div class="sc-val">${fmtC(mtdPrem)}</div><div class="sc-d up">${active.length} active policies</div></div>
+    <div class="sc"><div class="sc-lbl">MGA Commission</div><div class="sc-val">${fmtC(mtdComm)}</div><div class="sc-d up">↑ blended ${active.length?((mtdComm/mtdPrem)*100).toFixed(1):0}%</div></div>
+    <div class="sc"><div class="sc-lbl">Open Pipeline</div><div class="sc-val">${pend.length}</div><div class="sc-d neu">${S.subs.length} total subs</div></div>
+    <div class="sc"><div class="sc-lbl">Renewals Due</div><div class="sc-val">${S.subs.filter(s=>s.stage==='renewal').length}</div><div class="sc-d dn">Need re-marketing</div></div>
+    <div class="sc"><div class="sc-lbl">Markets</div><div class="sc-val">${CARRIERS.length}</div><div class="sc-d neu">Admitted &amp; Surplus</div></div>`;
+  $$('dashPipeBody').innerHTML=S.subs.slice(0,6).map(s=>`<tr onclick="openSubDetail('${s.id}')">
+    <td><div class="cn">${s.ins}</div><div class="cm">${agentName(s.agent)} · Age ${s.age}</div></td>
+    <td><span class="badge ${s.stage}">${stageLabel(s.stage)}</span></td>
+    <td><span style="font-size:11.5px;color:var(--muted)">${s.cqs?.filter(q=>!q.declined).length||0}/${CARRIERS.length}</span></td>
+    <td>${bestQ(s)?fmtC(bestQ(s).prem):'—'}</td>
+    <td>${nextAction(s)}</td></tr>`).join('');
+  $$('dashCommSnap').innerHTML=CARRIERS.map(c=>{const cv=active.filter(s=>s.selCarrier===c.id).reduce((a,s)=>a+(s.selQ?.comm||0),0);
+    return`<div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--bg);font-size:12.5px"><span style="color:var(--muted)">${c.name}</span><strong style="color:var(--green)">${fmtC(cv)}</strong></div>`;}).join('')+
+    `<div style="display:flex;justify-content:space-between;padding:8px 0;font-size:12.5px;font-weight:700;border-top:2px solid var(--mid);margin-top:4px"><span>Total</span><strong style="color:var(--green)">${fmtC(mtdComm)}</strong></div>`;
+  const renewals=S.subs.filter(s=>s.stage==='renewal');
+  $$('dashRenewCt').textContent=renewals.length+' due';
+  $$('dashRenewList').innerHTML=renewals.length?renewals.map(s=>`<div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--bg);cursor:pointer;font-size:12.5px" onclick="openSubDetail('${s.id}')"><div><div style="font-weight:600;color:var(--ink)">${s.ins}</div><div style="font-size:11px;color:var(--muted)">${s.polNum} · Exp ${s.expDate}</div></div><div style="text-align:right"><div style="font-weight:700;color:var(--purple)">${fmtC((s.selQ?.prem||0)*0.175)}</div><div style="font-size:11px;color:var(--muted)">Renewal comm</div></div></div>`).join(''):'<div style="color:var(--muted);font-size:12.5px;padding:.5rem 0">No renewals in next 30 days.</div>';
+  $$('dashBordSnap').innerHTML=`<div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--bg);font-size:12.5px"><span style="color:var(--muted)">June 2025 — In progress</span><button class="btn btn-sm btn-outline" onclick="nav('bordereaux')">View</button></div><div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--bg);font-size:12.5px"><span style="color:var(--muted)">May 2025 — Submitted</span><span class="badge issued">Filed</span></div><div style="display:flex;justify-content:space-between;padding:8px 0;font-size:12.5px"><span style="color:var(--muted)">April 2025 — Submitted</span><span class="badge issued">Filed</span></div>`;
+  updateSbCounters();
+}
+function bestQ(s){const qs=(s.cqs||[]).filter(q=>!q.declined);return qs.length?qs.reduce((a,b)=>a.prem<b.prem?a:b):s.selQ||null;}
+function nextAction(s){
+  const m={'new-app':'<button class="btn btn-sm btn-primary" onclick="event.stopPropagation();startMarketing(\''+s.id+'\')">Market →</button>',
+    submitted:'<button class="btn btn-sm btn-primary" onclick="event.stopPropagation();startMarketing(\''+s.id+'\')">Market →</button>',
+    marketing:'<span style="color:var(--amber);font-size:11.5px">Awaiting quotes…</span>',
+    quoted:'<button class="btn btn-sm btn-teal" onclick="event.stopPropagation();offerToAgent(\''+s.id+'\')">Offer →</button>',
+    offered:'<span style="color:var(--purple);font-size:11.5px">Awaiting agent</span>',
+    'bind-req':'<button class="btn btn-sm btn-green" onclick="event.stopPropagation();initBind(\''+s.id+'\')">Bind →</button>',
+    issued:'<span style="color:var(--muted);font-size:11.5px">Active</span>',
+    active:'<span style="color:var(--muted);font-size:11.5px">In force</span>',
+    renewal:'<button class="btn btn-sm btn-purple" onclick="event.stopPropagation();startMarketing(\''+s.id+'\')">Re-market →</button>'};
+  return m[s.stage]||'—';
+}
+function updateSbCounters(){
+  $$('sbSubCt').textContent=S.subs.length;
+  $$('sbMktCt').textContent=S.subs.filter(s=>['new-app','submitted'].includes(s.stage)).length;
+  $$('sbUwCt').textContent=S.subs.filter(s=>s.stage==='bind-req').length;
+  $$('sbCommCt').textContent=S.subs.filter(s=>isActive(s.stage)).length;
+  $$('sbRenewCt').textContent=S.subs.filter(s=>s.stage==='renewal').length;
+  $$('sbAmt').textContent=fmtC(S.subs.filter(s=>isActive(s.stage)).reduce((a,s)=>a+(s.selQ?.prem||0),0));
+  $$('sbSub').textContent=S.subs.filter(s=>isActive(s.stage)).length+' policies · '+fmtC(mgaCommTotal())+' comm';
+}
+
+// ═══ SUBMISSIONS LIST ═══
+function renderSubs(filter){
+  const f=filter||$$('subFilterChips')?.querySelector('.chip.on')?.dataset?.f||'all';
+  const list=f==='all'?S.subs:S.subs.filter(s=>s.stage===f);
+  $$('subTableBody').innerHTML=list.map(s=>{
+    const q=bestQ(s);
+    return`<tr onclick="openSubDetail('${s.id}')">
+      <td><div class="cn">${s.ins}</div><div class="cm">${agentName(s.agent)} · Age ${s.age} · ${s.body}</div></td>
+      <td style="font-family:'Courier New',monospace;font-size:11px;color:var(--muted)">${s.id}</td>
+      <td><span class="badge ${s.stage}">${stageLabel(s.stage)}</span></td>
+      <td>${s.selQ?`<span class="badge ${s.selQ.tier.toLowerCase()}">${s.selQ.tier}</span>`:s.cqs?.length?`<span class="badge ${s.cqs[0].tier?.toLowerCase()||'standard'}">${s.cqs[0].tier||'—'}</span>`:'—'}</td>
+      <td><span style="font-size:11.5px;color:var(--muted)">${(s.cqs||[]).filter(q=>!q.declined).length}/${CARRIERS.length}</span></td>
+      <td>${q?fmtC(q.prem):'—'}</td>
+      <td>${q?`<strong style="color:var(--green)">${fmtC(q.comm)}</strong> <span style="font-size:11px;color:var(--muted)">${q.commPct}%</span>`:'—'}</td>
+      <td>${s.effDate||'—'}</td>
+      <td>${nextAction(s)}</td></tr>`;}).join('');
+}
+function filterSubs(el){document.querySelectorAll('#subFilterChips .chip').forEach(b=>b.classList.remove('on'));el.classList.add('on');renderSubs(el.dataset.f);}
+
+// ═══ SUB DETAIL + MARKETING ═══
+function openSubDetail(id){
+  const s=S.subs.find(x=>x.id===id);if(!s)return;
+  const r=ratePolicy({age:s.age,atFault:s.atFault,minorV:s.minorV||0,majorV:s.majorV,credit:s.credit,miles:s.miles,body:s.body,acv:s.acv,telem:s.telem,trs:s.trs||72,biLim:25,pdLim:25,pipOpt:'full',umOpt:'25',compOpt:500,collOpt:500,mgaComm:15,agentSplit:12});
+  const stages=['new-app','submitted','marketing','quoted','offered','bind-req','bound','issued','active'];
+  const si=stages.indexOf(s.stage);
+  const ics={submitted:'📋',marketing:'📡',quoted:'💬',offered:'📤','bind-req':'⚡',bound:'✅',issued:'🛡️',active:'✅','new-app':'📥'};
+  const lc=stages.map((st,i)=>{const cls=i<si?'done':i===si?'on':'pend';return`<div class="lc-step ${cls}"><div class="lc-ic">${ics[st]||'•'}</div><div class="lc-name">${stageLabel(st)}</div><div class="lc-st">${cls==='done'?'Done':cls==='on'?'Current':'Pending'}</div></div>`;}).join('');
+  const cmpHtml=renderCmp(s,r);
+  const docs=S.docs.filter(d=>d.sub===s.id);
+  $$('subDetailContent').innerHTML=`
+    <div style="display:flex;align-items:flex-start;gap:10px;margin-bottom:1rem;flex-wrap:wrap">
+      <div style="flex:1"><div style="font-size:10.5px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.07em;margin-bottom:2px">${s.id}</div>
+        <div style="font-family:var(--serif);font-size:24px;color:var(--ink)">${s.ins}</div>
+        <div style="font-size:12.5px;color:var(--slate);margin-top:2px">Age ${s.age} · ${cap(s.body)} · ${s.miles?.toLocaleString()} mi/yr · TRS ${s.trs||'N/A'} · ${agentName(s.agent)}</div></div>
+      <div style="display:flex;gap:6px;flex-wrap:wrap"><span class="badge ${s.stage}">${stageLabel(s.stage)}</span>${s.selQ?`<span class="badge ${s.selQ.tier.toLowerCase()}">${s.selQ.tier}</span>`:''}</div>
+    </div>
+    <div class="lc">${lc}</div>
+    <div style="display:grid;grid-template-columns:1.6fr 1fr;gap:.875rem">
+      <div>
+        <div class="card" style="margin:0 0 .875rem">${uwPanel(r,s)}</div>
+        <div class="card" style="margin:0 0 .875rem">
+          <div class="card-hd">Carrier market results
+            ${['new-app','submitted'].includes(s.stage)?`<button class="btn btn-primary btn-sm" onclick="startMarketing('${s.id}')">📡 Market to all carriers</button>`:''}
+            ${s.stage==='quoted'&&!s.selQ?`<button class="btn btn-teal btn-sm" onclick="offerToAgent('${s.id}')">📤 Offer to agent</button>`:''}
+          </div>
+          ${cmpHtml}
+        </div>
+        <div class="card" style="margin:0"><div class="card-hd">Documents (DMS)</div>
+          ${docs.length?`<div class="doc-grid">${docs.map(d=>docCard(d)).join('')}</div>`:'<div style="color:var(--muted);font-size:12.5px">Documents auto-generated on bind.</div>'}
+        </div>
+      </div>
+      <div>
+        ${s.selQ?`<div class="ch" style="margin-bottom:.875rem">
+          <div class="ch-lbl">MGA Commission — Selected Market</div>
+          <div class="ch-amt">${fmtC(s.selQ.comm)}</div>
+          <div class="ch-grid">
+            <div class="ch-item"><div class="l">Rate</div><div class="v">${s.selQ.commPct}%</div></div>
+            <div class="ch-item"><div class="l">Premium</div><div class="v">${fmtC(s.selQ.prem)}</div></div>
+            <div class="ch-item"><div class="l">Net to Carrier</div><div class="v">${fmtC(s.selQ.net)}</div></div>
+          </div>
+          <div style="font-size:10.5px;opacity:.5;margin-top:.625rem">Agent share: ${fmtC(s.selQ.prem*0.12)} (12%) · Policy: ${s.polNum||'Pending'}</div>
+        </div>`:
+        `<div class="card" style="margin:0 0 .875rem"><div class="card-hd">Commission (pending)</div><div class="ibox blue"><svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a.75.75 0 000 1.5h.253a.25.25 0 01.244.304l-.459 2.066A1.75 1.75 0 0010.747 15H11a.75.75 0 000-1.5h-.253a.25.25 0 01-.244-.304l.459-2.066A1.75 1.75 0 009.253 9H9z" clip-rule="evenodd"/></svg><span>Commission shown after carrier selection.</span></div></div>`}
+        <div class="card" style="margin:0 0 .875rem"><div class="card-hd">Quick actions</div>
+          <div style="display:flex;flex-direction:column;gap:6px">
+            ${['new-app','submitted'].includes(s.stage)?`<button class="btn btn-primary" onclick="startMarketing('${s.id}')" style="width:100%;justify-content:center">📡 Market to carriers</button>`:''}
+            ${s.stage==='quoted'?`<button class="btn btn-teal" onclick="offerToAgent('${s.id}')" style="width:100%;justify-content:center">📤 Offer to retail agent</button>`:''}
+            ${s.stage==='bind-req'?`<button class="btn btn-green" onclick="initBind('${s.id}')" style="width:100%;justify-content:center">⚡ Bind &amp; Issue Policy</button>`:''}
+            ${s.stage==='renewal'?`<button class="btn btn-purple" onclick="startMarketing('${s.id}')" style="width:100%;justify-content:center">🔄 Re-market for renewal</button>`:''}
+            <button class="btn btn-outline" onclick="generateSubReport('${s.id}')" style="width:100%;justify-content:center">📊 Submission Report</button>
+            <button class="btn btn-ghost" onclick="window.print()" style="width:100%;justify-content:center">🖨 Print</button>
+          </div>
+        </div>
+        <div class="card" style="margin:0"><div class="card-hd">Timeline</div><div class="tl">${genTimeline(s)}</div></div>
+      </div>
+    </div>`;
+  nav('sub-detail');
+}
+function uwPanel(r,s){
+  const cls=r.decision==='Accept'?'ok':r.decision==='Decline'?'dec':'ref';
+  return`<div class="uw-panel">
+    <div class="uw-badge ${cls}">${r.decision} — Delegated UW</div>
+    <div class="uw-prem">${fmtC(r.total)}<span style="font-size:13px;opacity:.6">/yr</span></div>
+    <div class="uw-code">${r.classCode}</div>
+    <div class="uw-grid">
+      <div class="uw-item"><div class="k">Risk Tier</div><div class="v">${r.tier}</div></div>
+      <div class="uw-item"><div class="k">TRS Score</div><div class="v">${s.trs||'N/A'}/100</div></div>
+      <div class="uw-item"><div class="k">Pure Premium</div><div class="v">${fmtC(r.pure)}</div></div>
+      <div class="uw-item"><div class="k">FL Tax+Fees</div><div class="v">${fmtC(r.tax+r.fees)}</div></div>
+      <div class="uw-item"><div class="k">Telematics</div><div class="v">${s.telem?'Enrolled':'Traditional'}</div></div>
+      <div class="uw-item"><div class="k">LCM</div><div class="v">${s.telem?'1.439':'1.471'}</div></div>
+    </div>
+  </div>`;
+}
+function renderCmp(s,r){
+  const qs=s.cqs||[];
+  if(!qs.length){
+    if(s.stage==='marketing')return`<div class="ibox amber"><svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M8.485 2.495c.673-1.167 2.357-1.167 3.03 0l6.28 10.875c.673 1.167-.17 2.625-1.516 2.625H3.72c-1.347 0-2.189-1.458-1.515-2.625L8.485 2.495zM10 5a.75.75 0 01.75.75v3.5a.75.75 0 01-1.5 0v-3.5A.75.75 0 0110 5zm0 9a1 1 0 100-2 1 1 0 000 2z" clip-rule="evenodd"/></svg><span>Soliciting quotes from ${CARRIERS.length} markets…</span></div><button class="btn btn-primary btn-sm" onclick="simulateQuotes('${s.id}')">Simulate Quote Response</button>`;
+    return`<div class="ibox blue"><svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a.75.75 0 000 1.5h.253a.25.25 0 01.244.304l-.459 2.066A1.75 1.75 0 0010.747 15H11a.75.75 0 000-1.5h-.253a.25.25 0 01-.244-.304l.459-2.066A1.75 1.75 0 009.253 9H9z" clip-rule="evenodd"/></svg><span>No quotes yet. Click <strong>Market to carriers</strong> to begin.</span></div>`;
+  }
+  const acc=qs.filter(q=>!q.declined);
+  const bestPrem=acc.length?Math.min(...acc.map(q=>q.prem)):null;
+  const rows=CARRIERS.map(c=>{
+    const q=qs.find(x=>x.carrierId===c.id);
+    if(!q)return`<tr><td><div class="cn">${c.name}</div><div class="cm">${c.type}</div></td><td colspan="5" style="color:var(--muted);font-style:italic;font-size:11.5px">Awaiting…</td></tr>`;
+    if(q.declined)return`<tr><td><div class="cn">${c.name}</div><div class="cm">${c.type}</div></td><td><span class="badge decline">Declined</span></td><td colspan="3" style="color:var(--muted);font-size:11.5px">${q.reason||'Outside appetite'}</td><td>—</td></tr>`;
+    const isBest=q.prem===bestPrem;
+    const canSelect=['new-app','submitted','marketing','quoted','offered','bind-req'].includes(s.stage);
+    return`<tr class="${isBest?'best-row':''}">
+      <td><div class="cn" style="${isBest?'color:var(--green)':''}">${c.name}${isBest?' ⭐':''}</div><div class="cm">${c.type} · ${c.mgaComm||q.commPct}% MGA</div></td>
+      <td><span class="badge ${q.tier.toLowerCase()}">${q.tier}</span></td>
+      <td style="font-weight:${isBest?700:400};color:${isBest?'var(--green)':'var(--ink)'}">${fmtC(q.prem)}</td>
+      <td><strong style="color:var(--green)">${fmtC(q.comm)}</strong> <span style="font-size:11px;color:var(--muted)">${q.commPct}%</span></td>
+      <td style="font-size:10.5px;color:var(--muted)">${q.qNum}</td>
+      <td>${s.selCarrier===c.id?'<span class="badge issued">Selected ✓</span>':canSelect&&!q.declined?`<button class="btn btn-sm btn-outline" onclick="selectCarrier('${s.id}','${c.id}')">Select</button>`:'—'}</td>
+    </tr>`;}).join('');
+  return`<table class="cmp-tbl"><thead><tr><th>Carrier</th><th>Tier</th><th>Annual Premium</th><th>MGA Commission</th><th>Quote #</th><th>Action</th></tr></thead><tbody>${rows}</tbody></table>`;
+}
+function genTimeline(s){
+  const items=[
+    {done:true,label:'Application received',text:'From '+agentName(s.agent)+' · '+s.id},
+    {done:!['new-app','submitted'].includes(s.stage),label:'Marketed to carriers',text:(s.cqs||[]).length?((s.cqs||[]).filter(q=>!q.declined).length)+' responses received':'Pending'},
+    {done:['quoted','offered','bind-req','bound','issued','active','renewal'].includes(s.stage),label:'Quotes compared',text:bestQ(s)?'Best: '+fmtC(bestQ(s).prem):'—'},
+    {done:['offered','bind-req','bound','issued','active','renewal'].includes(s.stage),label:'Offered to agent',text:s.selQ?s.selQ.carrierName+' · '+fmtC(s.selQ.prem):'—'},
+    {done:['bind-req','bound','issued','active','renewal'].includes(s.stage),warn:s.stage==='bind-req',label:'Bind request',text:s.stage==='bind-req'?'Awaiting MGA confirmation':'Complete'},
+    {done:['issued','active','renewal'].includes(s.stage),label:'Policy issued',text:s.polNum?s.polNum+' · Eff '+s.effDate:'Pending'},
+  ];
+  return items.map(t=>`<div class="tl-item"><div class="tl-dot ${t.done?'done':t.warn?'warn':''}"></div><div class="tl-date">${t.label}</div><div class="tl-text">${t.text}</div></div>`).join('');
+}
+
+// ═══ WORKFLOW ACTIONS ═══
+function startMarketing(id){
+  const s=S.subs.find(x=>x.id===id);if(!s)return;
+  showOv('Marketing to '+CARRIERS.length+' carriers…','Sending submission to markets');
+  setTimeout(()=>{
+    const r=ratePolicy({age:s.age,atFault:s.atFault,minorV:s.minorV||0,majorV:s.majorV,credit:s.credit,miles:s.miles,body:s.body,acv:s.acv,telem:s.telem,trs:s.trs||72,biLim:25,pdLim:25,pipOpt:'full',umOpt:'25',compOpt:500,collOpt:500,mgaComm:15,agentSplit:12});
+    s.cqs=CARRIERS.map(c=>carrierQuote(c,r,s.id.slice(-3)));
+    s.stage='quoted';
+    addCompliance(s.id,s.ins,'Multi-carrier marketing','Quotes received — '+s.cqs.filter(q=>!q.declined).length+' markets responded','MGA','Victoria Chen');
+    addDoc('quote','Quote Comparison — '+s.ins,s.id,s.polNum);
+    hideOv();showToast('Quotes from '+s.cqs.filter(q=>!q.declined).length+' markets received','green');
+    openSubDetail(id);
+  },2200);
+}
+function simulateQuotes(id){startMarketing(id);}
+function selectCarrier(subId,carrierId){
+  const s=S.subs.find(x=>x.id===subId);if(!s)return;
+  const q=s.cqs.find(x=>x.carrierId===carrierId);if(!q||q.declined)return;
+  s.selCarrier=carrierId;s.selQ=q;s.stage='offered';
+  addCompliance(s.id,s.ins,'Carrier selected',q.carrierName+' — '+fmtC(q.prem)+'/yr','MGA','Victoria Chen');
+  showToast('Selected: '+q.carrierName,'green');openSubDetail(subId);
+}
+function offerToAgent(id){
+  const s=S.subs.find(x=>x.id===id);if(!s||!s.selQ)return;
+  s.stage='offered';
+  addCompliance(s.id,s.ins,'Quote offered to agent','Best: '+fmtC(s.selQ.prem)+' via '+s.selQ.carrierName,'MGA','Victoria Chen');
+  showToast('Quote sent to '+agentName(s.agent),'green');
+  if(document.querySelector('#view-sub-detail.on'))openSubDetail(id);
+}
+function initBind(id){
+  const s=S.subs.find(x=>x.id===id);if(!s||!s.selQ)return;
+  S.bindPend=id;
+  $$('bindSumContent').innerHTML=[['Insured',s.ins],['Carrier',s.selQ.carrierName],['Class Code',s.selQ.classCode],['Annual Premium',fmtC(s.selQ.prem)],['MGA Commission',fmtC(s.selQ.comm)+' ('+s.selQ.commPct+'%)'],['Agent Share',fmtC(s.selQ.prem*0.12)+' (12%)'],['Effective',s.selQ.effDate],['Expiry',s.selQ.expDate]].map(([k,v])=>`<div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--mid);font-size:12.5px"><span style="color:var(--muted)">${k}</span><strong>${v}</strong></div>`).join('');
+  $$('bindCommDisp').textContent=fmtC(s.selQ.comm);openModal('bindModal');
+}
+function confirmBind(){
+  const id=S.bindPend;const s=S.subs.find(x=>x.id===id);if(!s)return;
+  closeModal('bindModal');showOv('Binding policy…','Issuing under delegated authority');
+  setTimeout(()=>{
+    s.stage='issued';
+    s.polNum='POL-FL-33545-0'+String(S.subs.indexOf(s)+1).padStart(2,'0');
+    s.effDate=s.selQ.effDate;s.expDate=s.selQ.expDate;
+    addCompliance(s.id,s.ins,'Policy Issued','Bound — '+fmtC(s.selQ.prem)+' · '+s.polNum,'MGA — Delegated','Victoria Chen');
+    addDoc('bind','Bind Confirmation — '+s.polNum,s.id,s.polNum,s.selQ.carrierName);
+    addDoc('policy','Policy Document — '+s.polNum,s.id,s.polNum,s.selQ.carrierName);
+    addDoc('invoice','Premium Invoice — '+s.polNum,s.id,s.polNum,s.selQ.carrierName);
+    hideOv();updateSbCounters();
+    showToast('Policy '+s.polNum+' issued · Comm '+fmtC(s.selQ.comm)+' logged','green');
+    if(document.querySelector('#view-sub-detail.on'))openSubDetail(id);else renderMGADash();
+  },2400);
+}
+
+// ═══ NEW SUBMISSION MODAL ═══
+function openNewSubModal(){
+  const sel=$$('ns-fn');if(!sel)return;openModal('newSubModal');
+}
+function createSub(){
+  const fn=($$('ns-fn')?.value||'').trim(),ln=($$('ns-ln')?.value||'').trim();
+  if(!fn){$$('nse-fn').classList.add('on');return;}else $$('nse-fn').classList.remove('on');
+  if(!ln){$$('nse-ln').classList.add('on');return;}else $$('nse-ln').classList.remove('on');
+  const dob=$$('ns-dob')?.value;
+  let age=21;
+  if(dob){age=Math.max(16,Math.min(30,Math.floor((new Date()-new Date(dob))/31557600000)));
+    if(age<16||age>30){$$('nse-dob').classList.add('on');return;}else $$('nse-dob').classList.remove('on');}
+  const id='SUB-2025-'+String(Math.floor(Math.random()*900+100));
+  const ns={id,ins:`${fn} ${ln}`,agent:$$('ns-agent')?.value||'chen',age,body:$$('ns-body')?.value||'sedan',
+    acv:parseInt($$('ns-acv')?.value||22000),atFault:parseInt($$('ns-af')?.value||0),minorV:0,
+    majorV:$$('ns-maj')?.value||'none',credit:parseInt($$('ns-credit')?.value||700),
+    miles:parseInt($$('ns-miles')?.value||12000),telem:$$('ns-telem')?.value==='yes',
+    trs:parseInt($$('ns-trs')?.value)||null,
+    stage:'new-app',selCarrier:null,selQ:null,polNum:null,effDate:null,expDate:null,cqs:[]};
+  S.subs.unshift(ns);
+  addCompliance(id,ns.ins,'Application received','From '+agentName(ns.agent)+' — intake complete','MGA','Victoria Chen');
+  closeModal('newSubModal');updateSbCounters();
+  showToast('Submission '+id+' created','green');openSubDetail(id);
+}
+
+// ═══ UNDERWRITING ═══
+function renderUW(){
+  const pend=S.subs.filter(s=>s.stage==='bind-req');
+  $$('uwPendCt').textContent=pend.length;
+  $$('uwPendList').innerHTML=pend.length?pend.map(s=>`<div style="display:flex;align-items:center;gap:10px;padding:9px 0;border-bottom:1px solid var(--bg);flex-wrap:wrap">
+    <div style="flex:1"><div style="font-weight:600;color:var(--ink)">${s.ins}</div><div style="font-size:11.5px;color:var(--muted)">${s.id} · ${agentName(s.agent)} · TRS ${s.trs||'N/A'} · ${s.selQ?.carrierName||'—'}</div></div>
+    ${s.selQ?`<span style="font-weight:700;color:var(--green)">${fmtC(s.selQ.prem)}</span>`:''}
+    <button class="btn btn-sm btn-green" onclick="initBind('${s.id}')">⚡ Bind &amp; Issue</button>
+    <button class="btn btn-sm btn-outline" onclick="openSubDetail('${s.id}')">Review</button>
+  </div>`).join(''):`<div style="color:var(--muted);font-size:12.5px;padding:.5rem 0">No pending bind requests.</div>`;
+}
+
+// ═══ BORDEREAUX ═══
+function renderBordereaux(){
+  const carr=$$('bordCarrier')?.value||'all';
+  const list=S.subs.filter(s=>isActive(s.stage)&&s.selQ&&(carr==='all'||s.selCarrier===carr));
+  let tp=0,tc=0,tn=0;
+  $$('bordStats').innerHTML=`
+    <div class="sc"><div class="sc-lbl">Policies</div><div class="sc-val">${list.length}</div></div>
+    <div class="sc"><div class="sc-lbl">Gross Premium</div><div class="sc-val">${fmtC(list.reduce((a,s)=>a+s.selQ.prem,0))}</div></div>
+    <div class="sc"><div class="sc-lbl">MGA Commission</div><div class="sc-val">${fmtC(list.reduce((a,s)=>a+s.selQ.comm,0))}</div></div>
+    <div class="sc"><div class="sc-lbl">Carrier Net</div><div class="sc-val">${fmtC(list.reduce((a,s)=>a+s.selQ.net,0))}</div></div>
+    <div class="sc"><div class="sc-lbl">Avg Comm%</div><div class="sc-val">${list.length?(list.reduce((a,s)=>a+s.selQ.commPct,0)/list.length).toFixed(1)+'%':'—'}</div></div>`;
+  $$('bordBody').innerHTML=list.map(s=>{
+    tp+=s.selQ.prem;tc+=s.selQ.comm;tn+=s.selQ.net;
+    return`<tr><td style="font-family:'Courier New',monospace;font-size:10.5px">${s.id}</td>
+      <td style="font-family:'Courier New',monospace;font-size:10.5px">${s.polNum||'—'}</td>
+      <td><strong>${s.ins}</strong></td><td>${s.selQ.carrierName}</td>
+      <td>${s.effDate||'—'}</td><td>${s.expDate||'—'}</td>
+      <td class="num">${fmtC(s.selQ.prem)}</td><td class="num">${s.selQ.commPct}%</td>
+      <td class="num" style="color:var(--green);font-weight:700">${fmtC(s.selQ.comm)}</td>
+      <td class="num">${fmtC(s.selQ.net)}</td>
+      <td><span class="badge ${s.stage}">${stageLabel(s.stage)}</span></td></tr>`;}).join('');
+  $$('bordFoot').innerHTML=`<td colspan="6" style="text-align:right;font-size:10.5px;text-transform:uppercase;letter-spacing:.05em">TOTALS (${list.length} policies)</td>
+    <td class="num">${fmtC(tp)}</td><td class="num">—</td><td class="num" style="color:var(--green)">${fmtC(tc)}</td><td class="num">${fmtC(tn)}</td><td></td>`;
+}
+function exportBord(fmt){
+  showOv('Generating bordereaux…',fmt==='carrier'?'Submitting to carrier':'Exporting '+fmt.toUpperCase());
+  setTimeout(()=>{hideOv();showToast(fmt==='carrier'?'Bordereaux submitted to carrier portal':'Exported as '+fmt.toUpperCase(),'green');
+    addDoc('bord','Bordereaux — June 2025','ALL','ALL','All Carriers');},1800);
+}
+
+// ═══ DMS ═══
+function docCard(d){
+  const ic={quote:'📊',bind:'⚡',policy:'🛡️',invoice:'💵',bord:'📋',endorsement:'✏️'};
+  const col={quote:'var(--amber)',bind:'var(--teal)',policy:'var(--green)',invoice:'var(--blue)',bord:'var(--purple)',endorsement:'var(--orange)'};
+  return`<div class="doc-card" onclick="openDoc('${d.id}')">
+    <div class="doc-icon" style="background:${col[d.type]||'var(--slate)'}20;color:${col[d.type]};font-size:16px">${ic[d.type]||'📄'}</div>
+    <div class="doc-name">${d.name}</div>
+    <div class="doc-meta">${d.date} · ${d.size||'—'}</div>
+    <div class="doc-meta" style="margin-top:1px">${d.carrier||'—'}</div>
+    <span class="doc-tag ${d.type}">${d.type==='bord'?'Bordereaux':cap(d.type)}</span>
+  </div>`;
+}
+function renderDMS(){
+  const q=($$('dmsSearch')?.value||'').toLowerCase();
+  const t=$$('dmsType')?.value||'all';
+  const docs=S.docs.filter(d=>(t==='all'||d.type===t)&&(!q||d.name.toLowerCase().includes(q)||(d.pol||'').toLowerCase().includes(q)||(d.carrier||'').toLowerCase().includes(q)));
+  $$('dmsGrid').innerHTML=docs.length?docs.map(d=>docCard(d)).join(''):`<div class="ibox blue" style="grid-column:1/-1"><svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a.75.75 0 000 1.5h.253a.25.25 0 01.244.304l-.459 2.066A1.75 1.75 0 0010.747 15H11a.75.75 0 000-1.5h-.253a.25.25 0 01-.244-.304l.459-2.066A1.75 1.75 0 009.253 9H9z" clip-rule="evenodd"/></svg><span>No documents found. Documents are generated automatically on bind.</span></div>`;
+}
+function openDoc(id){
+  const d=S.docs.find(x=>x.id===id);if(!d)return;
+  const s=d.sub!=='ALL'?S.subs.find(x=>x.id===d.sub):null;
+  $$('docModalTitle').textContent=d.name;$$('docModalSub').textContent=d.type.toUpperCase()+' · '+d.carrier+' · '+d.date;
+  let body='';
+  if(d.type==='policy'&&s?.selQ){body=`PERSONAL AUTO INSURANCE POLICY\n${'═'.repeat(52)}\n\nPOLICY NUMBER: ${s.polNum}\nINSURED: ${s.ins}\nCARRIER: ${s.selQ.carrierName}\n\nEFFECTIVE: ${s.effDate}  →  EXPIRY: ${s.expDate}\n\nCOVERAGES:\n  Bodily Injury: $25,000/$50,000\n  Property Damage: $25,000\n  PIP: $10,000 (FL Required)\n  UM/UIM: $25,000/$50,000\n  Comprehensive: ACV/$500 ded\n  Collision: ACV/$500 ded\n\nANNUAL PREMIUM: ${fmtC(s.selQ.prem)}\nFL TAX (1.75%): ${fmtC(s.selQ.prem*0.0175)}\n\nCLASS CODE: ${s.selQ.classCode}\nRISK TIER: ${s.selQ.tier}\nTERRITORY: ZIP 33545, Pasco County, FL\n\nMGA: BridgePoint MGA — License FL-MGA-8847\nIssued under delegated authority.`;}
+  else if(d.type==='invoice'&&s?.selQ){body=`PREMIUM INVOICE\n${'═'.repeat(40)}\nPolicy: ${s.polNum}\nInsured: ${s.ins}\nCarrier: ${s.selQ.carrierName}\nDue Date: ${fDate(30)}\n\nGross Annual Premium:  ${fmtC(s.selQ.prem)}\nFL Insurance Tax:      ${fmtC(s.selQ.prem*0.0175)}\nFiling Fee:            $32.00\nPolicy Fee:            $45.00\nEMTF:                  $2.00\n${'─'.repeat(40)}\nTOTAL DUE:             ${fmtC(s.selQ.prem+s.selQ.prem*0.0175+79)}\n\nRemit to: BridgePoint MGA\nBank: Citizens Business Bank\nABA: 122243859 · Acct: 7841029304`;}
+  else if(d.type==='bind'&&s?.selQ){body=`BIND CONFIRMATION\n${'═'.repeat(40)}\nPolicy: ${s.polNum}\nInsured: ${s.ins}\nCarrier: ${s.selQ.carrierName}\nQuote: ${s.selQ.qNum}\nBound: ${isoNow()}\nAuthority: Delegated — DA Agreement #MGA-FL-2024-003\n\nPremium: ${fmtC(s.selQ.prem)}\nMGA Commission: ${fmtC(s.selQ.comm)} (${s.selQ.commPct}%)\nCarrier Net: ${fmtC(s.selQ.net)}\n\nFL DFS Compliance: Recorded\nAdverse Action: N/A — Accept`;}
+  else if(d.type==='bord'){body=`PREMIUM BORDEREAUX — JUNE 2025\n${'═'.repeat(52)}\nMGA: BridgePoint MGA · FL-MGA-8847\nPeriod: June 1–30, 2025\n\n${'─'.repeat(52)}\n${S.subs.filter(s=>isActive(s.stage)&&s.selQ).map(s=>`${(s.polNum||s.id).padEnd(20)} ${s.ins.padEnd(18)} ${fmtC(s.selQ.prem).padStart(8)}  ${s.selQ.commPct}%  ${fmtC(s.selQ.comm).padStart(8)}`).join('\n')}\n${'─'.repeat(52)}\nGROSS TOTAL: ${fmtC(S.subs.filter(s=>isActive(s.stage)&&s.selQ).reduce((a,s)=>a+s.selQ.prem,0))}\nMGA COMM:    ${fmtC(mgaCommTotal())}\n\nCertified by: Victoria Chen, CPCU\nDate: ${new Date().toLocaleDateString()}`;}
+  else body=`Document: ${d.name}\nType: ${d.type}\nGenerated: ${d.date}\n\n[Full content in production system]`;
+  $$('docModalBody').textContent=body;openModal('docModal');
+}
+function addDoc(type,name,sub,pol,carrier='BridgePoint MGA'){
+  if(!S.docs.find(d=>d.name===name))S.docs.push({id:'DOC-'+Date.now(),type,name,sub:sub||'ALL',pol:pol||'—',date:rDate(0),size:Math.floor(50+Math.random()*300)+' KB',carrier});
+}
+
+// ═══ MGA COMMISSION ═══
+function renderMGAComm(){
+  const act=S.subs.filter(s=>isActive(s.stage)&&s.selQ);
+  const tp=act.reduce((a,s)=>a+s.selQ.prem,0),tc=act.reduce((a,s)=>a+s.selQ.comm,0);
+  $$('commStats').innerHTML=`
+    <div class="sc"><div class="sc-lbl">Total MGA Commission</div><div class="sc-val">${fmtC(tc)}</div><div class="sc-d up">${act.length} policies</div></div>
+    <div class="sc"><div class="sc-lbl">Gross Premium</div><div class="sc-val">${fmtC(tp)}</div></div>
+    <div class="sc"><div class="sc-lbl">Blended Comm%</div><div class="sc-val">${act.length?((tc/tp)*100).toFixed(1)+'%':'—'}</div></div>
+    <div class="sc"><div class="sc-lbl">Agent Profit-Share</div><div class="sc-val">${fmtC(tp*0.12)}</div><div class="sc-d neu">12% avg</div></div>`;
+  $$('commCarrierList').innerHTML=CARRIERS.map(c=>{const cp=act.filter(s=>s.selCarrier===c.id);const cc=cp.reduce((a,s)=>a+s.selQ.comm,0);
+    return`<div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--bg);font-size:12.5px"><div><div style="font-weight:600;color:var(--ink)">${c.name}</div><div style="font-size:11px;color:var(--muted)">${cp.length} policies · ${c.mgaComm}%</div></div><strong style="color:var(--green)">${fmtC(cc)}</strong></div>`;}).join('');
+  $$('commAgentList').innerHTML=['chen','patel','garcia','johnson'].map(ag=>{const ap=act.filter(s=>s.agent===ag);const as2=ap.reduce((a,s)=>a+s.selQ.prem,0)*0.12;
+    return`<div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--bg);font-size:12.5px"><div><div style="font-weight:600;color:var(--ink)">${agentName(ag)}</div><div style="font-size:11px;color:var(--muted)">${ap.length} policies</div></div><strong style="color:var(--blue)">${fmtC(as2)}</strong></div>`;}).join('');
+  $$('commBody').innerHTML=act.map(s=>`<tr><td style="font-family:'Courier New',monospace;font-size:11px">${s.polNum||s.id}</td><td><div class="cn">${s.ins}</div><div class="cm">${agentName(s.agent)}</div></td><td>${s.selQ.carrierName}</td><td class="ra">${fmtC(s.selQ.prem)}</td><td class="ra">${s.selQ.commPct}%</td><td class="ra" style="font-weight:700;color:var(--green)">${fmtC(s.selQ.comm)}</td><td class="ra" style="color:var(--blue)">${fmtC(s.selQ.prem*0.12)}</td><td><span class="badge paid">Paid</span></td></tr>`).join('');
+}
+
+// ═══ COMPLIANCE ═══
+function renderCompliance(){
+  $$('complianceBody').innerHTML=S.compLog.map(l=>`<tr><td style="font-family:'Courier New',monospace;font-size:10.5px;color:var(--muted)">${l.ts}</td><td style="font-family:'Courier New',monospace;font-size:11px">${l.sub}</td><td><strong>${l.ins}</strong></td><td>${l.event}</td><td style="font-size:11.5px;max-width:180px">${l.decision}</td><td><span class="badge submitted">${l.auth}</span></td><td style="font-size:11.5px;color:var(--muted)">${l.user}</td></tr>`).join('');
+}
+function addCompliance(sub,ins,event,decision,auth,user){S.compLog.unshift({ts:isoNow(),sub,ins,event,decision,auth,user});}
+
+// ═══ RENEWALS ═══
+function renderRenewals(){
+  const rens=S.subs.filter(s=>s.stage==='renewal');
+  $$('renewalBody').innerHTML=rens.length?rens.map(s=>`<tr onclick="openSubDetail('${s.id}')"><td style="font-family:'Courier New',monospace;font-size:11px">${s.polNum||s.id}</td><td><div class="cn">${s.ins}</div><div class="cm">${agentName(s.agent)}</div></td><td>${s.selQ?.carrierName||'—'}</td><td style="font-weight:700;color:var(--red)">${s.expDate}</td><td>${fmtC(s.selQ?.prem)}</td><td style="font-weight:700;color:var(--purple)">${fmtC((s.selQ?.prem||0)*0.175)}</td><td>${s.trs||'N/A'}/100</td><td><button class="btn btn-sm btn-purple" onclick="event.stopPropagation();startMarketing('${s.id}')">Re-market</button></td></tr>`).join(''):
+    `<tr><td colspan="8" style="text-align:center;padding:2rem;color:var(--muted)">No renewals due in next 60 days.</td></tr>`;
+}
+
+// ═══ REPORTS ═══
+function openReportModal(){const t=new Date(),f=new Date();f.setDate(f.getDate()-30);$$('rpt-from').value=f.toISOString().slice(0,10);$$('rpt-to').value=t.toISOString().slice(0,10);openModal('reportModal');}
+function doReport(){closeModal('reportModal');showOv('Generating report…','');setTimeout(()=>{hideOv();addDoc('bord','Submission Report — '+new Date().toLocaleDateString(),'ALL','ALL','All Carriers');showToast('Report generated and saved to DMS','green');},1800);}
+function generateSubReport(id){showOv('Generating submission report…','');setTimeout(()=>{hideOv();const s=S.subs.find(x=>x.id===id);if(s)addDoc('bord','Submission Report — '+s.ins,id,s.polNum||'—',s.selQ?.carrierName||'MGA');showToast('Submission report generated','green');},1200);}
+
+// ═══ AGENT MODE ═══
+function renderAgentDash(){
+  const hr=new Date().getHours();
+  $$('agentDashTitle').textContent=(hr<12?'Good morning':hr<17?'Good afternoon':'Good evening')+', Sarah';
+  const my=S.subs.filter(s=>s.agent==='chen');
+  const myAct=my.filter(s=>isActive(s.stage));
+  const myComm=myAct.reduce((a,s)=>a+(s.selQ?.prem||0)*0.12,0);
+  $$('agentStats').innerHTML=`
+    <div class="sc"><div class="sc-lbl">My Commission MTD</div><div class="sc-val">${fmtC(myComm)}</div><div class="sc-d up">${myAct.length} policies</div></div>
+    <div class="sc"><div class="sc-lbl">Open Submissions</div><div class="sc-val">${my.filter(s=>!isActive(s.stage)).length}</div></div>
+    <div class="sc"><div class="sc-lbl">Active Policies</div><div class="sc-val">${myAct.length}</div></div>`;
+  $$('agentPipeBody').innerHTML=my.slice(0,6).map(s=>{const q=bestQ(s);return`<tr>
+    <td><div class="cn">${s.ins}</div><div class="cm">Age ${s.age} · ${s.body}</div></td>
+    <td><span class="badge ${s.stage}">${stageLabel(s.stage)}</span></td>
+    <td>${q?fmtC(q.prem):'Awaiting'}</td>
+    <td>${s.selQ?`<span style="font-weight:700;color:var(--green)">${fmtC(s.selQ.prem*0.12)}</span>`:'—'}</td>
+    <td>${agentNextAction(s)}</td></tr>`;}).join('');
+  const offers=my.filter(s=>s.stage==='offered'&&s.selQ);
+  $$('agentOffers').innerHTML=offers.length?offers.map(s=>`<div style="border:1.5px solid var(--blue);border-radius:var(--rl);padding:.875rem;margin-bottom:.625rem;background:var(--bdim)">
+    <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px">
+      <div><div style="font-weight:700;color:var(--ink)">${s.ins} — ${s.selQ.carrierName}</div><div style="font-size:11.5px;color:var(--slate)">Annual: ${fmtC(s.selQ.prem)} · My commission: ${fmtC(s.selQ.prem*0.12)} · Class: ${s.selQ.classCode}</div></div>
+      <button class="btn btn-orange" onclick="agentReqBind('${s.id}')">Request Bind →</button>
+    </div></div>`).join(''):`<div style="color:var(--muted);font-size:12.5px;padding:.5rem 0">No pending quote offers from BridgePoint MGA.</div>`;
+  $$('asbAmt').textContent=fmtC(myComm);$$('asbSub').textContent=myAct.length+' active';$$('asbPipe').textContent=my.filter(s=>!isActive(s.stage)).length;
+}
+function agentNextAction(s){
+  if(s.stage==='offered')return`<button class="btn btn-sm btn-orange" onclick="event.stopPropagation();agentReqBind('${s.id}')">Request bind →</button>`;
+  if(['new-app','submitted'].includes(s.stage))return`<span style="color:var(--amber);font-size:11.5px">Awaiting MGA</span>`;
+  if(s.stage==='marketing')return`<span style="color:var(--blue);font-size:11.5px">Marketing…</span>`;
+  if(s.stage==='bind-req')return`<span style="color:var(--orange);font-size:11.5px">Bind pending</span>`;
+  if(isActive(s.stage))return`<span style="color:var(--green);font-size:11.5px">Active ✓</span>`;
+  return'—';
+}
+function agentReqBind(id){
+  const s=S.subs.find(x=>x.id===id);if(!s)return;
+  s.stage='bind-req';
+  addCompliance(s.id,s.ins,'Bind request','Requested by agent '+agentName(s.agent),'Agent','Sarah Chen');
+  showToast('Bind request sent to BridgePoint MGA','green');renderAgentDash();
+}
+function renderAgentPipeline(){
+  const my=S.subs.filter(s=>s.agent==='chen');
+  $$('agentFullBody').innerHTML=my.map(s=>{const q=bestQ(s);return`<tr><td><div class="cn">${s.ins}</div></td><td style="font-family:'Courier New',monospace;font-size:10.5px;color:var(--muted)">${s.id}</td><td><span class="badge ${s.stage}">${stageLabel(s.stage)}</span></td><td>${q?fmtC(q.prem):'Awaiting'}</td><td>${s.selQ?`<strong style="color:var(--green)">${fmtC(s.selQ.prem*0.12)}</strong>`:'—'}</td><td>${agentNextAction(s)}</td></tr>`;}).join('');
+}
+function renderAgentComm(){
+  const my=S.subs.filter(s=>s.agent==='chen'&&isActive(s.stage)&&s.selQ);
+  const tot=my.reduce((a,s)=>a+s.selQ.prem*0.12,0);
+  $$('aCommStats').innerHTML=`<div class="sc"><div class="sc-lbl">Total Commission</div><div class="sc-val">${fmtC(tot)}</div><div class="sc-d up">${my.length} policies</div></div><div class="sc"><div class="sc-lbl">Pending</div><div class="sc-val">${fmtC(tot*0.3)}</div></div>`;
+  $$('aCommList').innerHTML=`<table class="tbl"><thead><tr><th>Policy</th><th>Insured</th><th>Premium</th><th>My Commission</th><th>Status</th></tr></thead><tbody>${my.map(s=>`<tr><td style="font-family:'Courier New',monospace;font-size:10.5px">${s.polNum||s.id}</td><td>${s.ins}</td><td>${fmtC(s.selQ.prem)}</td><td style="font-weight:700;color:var(--green)">${fmtC(s.selQ.prem*0.12)}</td><td><span class="badge paid">Paid</span></td></tr>`).join('')}</tbody></table>`;
+}
+
+// ═══ AGENT NEW SUBMISSION WIZARD ═══
+let AWZ={step:1};
+function renderAgentNew(){AWZ={step:1};updWizBar();$$('aWizContent').innerHTML=agWiz1();}
+function agWiz1(){return`<div class="wiz-pane on" id="awp-1"><div class="card"><div class="card-hd">Insured information</div>
+  <div class="fr c2">
+    <div class="fg"><label class="fl">First name</label><input type="text" id="aw-fn" placeholder="Jordan"><div class="ferr" id="awe-fn">Required</div></div>
+    <div class="fg"><label class="fl">Last name</label><input type="text" id="aw-ln" placeholder="Smith"><div class="ferr" id="awe-ln">Required</div></div>
+    <div class="fg"><label class="fl">Date of birth</label><input type="date" id="aw-dob"><div class="ferr" id="awe-dob">Age 16–30</div></div>
+    <div class="fg"><label class="fl">Email</label><input type="email" id="aw-email" placeholder="insured@email.com"><div class="ferr" id="awe-email">Valid email</div></div>
+    <div class="fg"><label class="fl">FL License #</label><input type="text" id="aw-lic"><div class="ferr" id="awe-lic">Required</div></div>
+    <div class="fg"><label class="fl">ZIP</label><input type="text" id="aw-zip" value="33545" maxlength="5"><div class="ferr" id="awe-zip">5-digit ZIP</div></div>
+  </div></div>
+  <div class="wiz-nav"><div></div><button class="btn btn-primary" onclick="agWizNext(1)">Next: Driving history →</button></div>
+</div>`;}
+function agWizNext(from){
+  if(from===1){
+    let ok=true;
+    ['fn','ln','lic'].forEach(f=>{const v=$$('aw-'+f)?.value?.trim();const e=$$('awe-'+f);if(!v){if(e)e.classList.add('on');ok=false;}else if(e)e.classList.remove('on');});
+    const dob=$$('aw-dob')?.value;const de=$$('awe-dob');
+    if(dob){const age=Math.floor((new Date()-new Date(dob))/31557600000);if(age<16||age>30){if(de)de.classList.add('on');ok=false;}else if(de)de.classList.remove('on');}else{if(de)de.classList.add('on');ok=false;}
+    const em=$$('aw-email')?.value||'';if(!em.includes('@')){const e=$$('awe-email');if(e)e.classList.add('on');ok=false;}
+    if(!ok)return;AWZ.step=2;updWizBar();
+    $$('aWizContent').innerHTML=`<div class="wiz-pane on"><div class="card"><div class="card-hd">Driving history</div>
+      <div class="fr c2">
+        <div class="fg"><label class="fl">At-fault accidents (3yr)</label><select id="aw-af"><option value="0">0</option><option value="1">1</option><option value="2">2+</option></select></div>
+        <div class="fg"><label class="fl">Minor violations (3yr)</label><select id="aw-mv"><option value="0">0</option><option value="1">1</option><option value="2">2</option></select></div>
+        <div class="fg"><label class="fl">Major violations (5yr)</label><select id="aw-maj"><option value="none">None</option><option value="reckless">Reckless</option><option value="dui">DUI/DWI</option></select></div>
+        <div class="fg"><label class="fl">Credit score</label><select id="aw-cr"><option value="800">800+</option><option value="750">750–799</option><option value="700" selected>700–749</option><option value="650">650–699</option><option value="600">Below 650</option></select></div>
+        <div class="fg"><label class="fl">SR-22</label><select id="aw-sr22"><option value="no">No</option><option value="yes">Yes</option></select></div>
+        <div class="fg"><label class="fl">Prior carrier</label><select id="aw-prior"><option>Continuous</option><option>1–30 day lapse</option><option>No prior</option></select></div>
+      </div></div>
+      <div class="wiz-nav"><button class="btn btn-ghost" onclick="agWizBack(2)">← Back</button><button class="btn btn-primary" onclick="agWizNext(2)">Next: Vehicle →</button></div>
+    </div>`;
+  } else if(from===2){
+    AWZ.step=3;updWizBar();const cy=new Date().getFullYear();
+    $$('aWizContent').innerHTML=`<div class="wiz-pane on"><div class="card"><div class="card-hd">Vehicle</div>
+      <div class="fr c3">
+        <div class="fg"><label class="fl">Year</label><select id="aw-yr">${[...Array(26)].map((_,i)=>`<option value="${cy-i}">${cy-i}</option>`).join('')}</select></div>
+        <div class="fg"><label class="fl">Make</label><select id="aw-mk"><option>Honda</option><option>Toyota</option><option>Ford</option><option>Chevrolet</option><option>Nissan</option><option>Subaru</option><option>Other</option></select></div>
+        <div class="fg"><label class="fl">Model</label><input type="text" id="aw-model" placeholder="e.g. Civic"></div>
+      </div>
+      <div class="fr c2">
+        <div class="fg"><label class="fl">Body type</label><select id="aw-body"><option value="sedan">Sedan/Coupe</option><option value="suv">SUV</option><option value="truck">Truck</option><option value="sport">Sport</option></select></div>
+        <div class="fg"><label class="fl">ACV</label><select id="aw-acv"><option value="10000">Under $12k</option><option value="22000" selected>$12k–$26k</option><option value="30000">$26k–$35k</option><option value="42000">$35k–$50k</option></select></div>
+      </div>
+      <div class="fg"><label class="fl">Annual mileage</label><div class="sl-row"><span style="font-size:11px;color:var(--muted)">1k</span><input type="range" id="aw-mi" min="1000" max="30000" step="500" value="12000" oninput="$$('aw-miV').textContent=parseInt(this.value).toLocaleString()+' mi/yr'"><span style="font-size:11px;color:var(--muted)">30k</span><span class="sl-val" id="aw-miV">12,000 mi/yr</span></div></div>
+      <div class="fg" style="margin-top:.5rem"><label class="fl" style="margin-bottom:.4rem;display:block">Telematics</label>
+        <div class="chips" id="awTC"><button class="chip on" data-v="yes" onclick="sChip('awTC',this)">Enrolled (save up to 28%)</button><button class="chip" data-v="no" onclick="sChip('awTC',this)">Traditional only</button></div>
+      </div></div>
+      <div class="wiz-nav"><button class="btn btn-ghost" onclick="agWizBack(3)">← Back</button><button class="btn btn-primary" onclick="agWizNext(3)">Next: Coverage →</button></div>
+    </div>`;
+  } else if(from===3){
+    AWZ.step=4;updWizBar();
+    $$('aWizContent').innerHTML=`<div class="wiz-pane on"><div class="card"><div class="card-hd">Coverage selection</div>
+      <div class="cov-row"><div class="cov-info"><div class="cov-name">Bodily Injury (BI)</div></div><div class="cov-ctl"><select id="aw-bi"><option value="10">$10k/$20k</option><option value="25" selected>$25k/$50k</option><option value="50">$50k/$100k</option></select></div></div>
+      <div class="cov-row"><div class="cov-info"><div class="cov-name">PD</div></div><div class="cov-ctl"><select id="aw-pd"><option value="10">$10k</option><option value="25" selected>$25k</option><option value="50">$50k</option></select></div></div>
+      <div class="cov-row"><div class="cov-info"><div class="cov-name">PIP <span class="cov-req">FL Req</span></div></div><div class="cov-ctl"><select id="aw-pip"><option value="full">$10k Full</option><option value="medonly">$10k Med Only</option></select></div></div>
+      <div class="cov-row"><div class="cov-info"><div class="cov-name">UM/UIM</div></div><div class="cov-ctl"><select id="aw-um"><option value="none">None</option><option value="25" selected>$25k/$50k</option></select></div></div>
+      <div class="cov-row"><div class="cov-info"><div class="cov-name">Comprehensive</div></div><div class="cov-ctl"><select id="aw-comp"><option value="none">None</option><option value="500" selected>ACV/$500</option></select></div></div>
+      <div class="cov-row"><div class="cov-info"><div class="cov-name">Collision</div></div><div class="cov-ctl"><select id="aw-coll"><option value="none">None</option><option value="500" selected>ACV/$500</option></select></div></div>
+    </div>
+    <div class="ibox blue"><svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a.75.75 0 000 1.5h.253a.25.25 0 01.244.304l-.459 2.066A1.75 1.75 0 0010.747 15H11a.75.75 0 000-1.5h-.253a.25.25 0 01-.244-.304l.459-2.066A1.75 1.75 0 009.253 9H9z" clip-rule="evenodd"/></svg><span>Submission goes to BridgePoint MGA for multi-carrier marketing. Quotes in 2–5 minutes.</span></div>
+    <div class="wiz-nav"><button class="btn btn-ghost" onclick="agWizBack(4)">← Back</button><button class="btn btn-green btn-lg" onclick="agSubmit()">📤 Submit to BridgePoint MGA</button></div>
+  </div>`;
+  }
+}
+function agWizBack(from){AWZ.step=from-1;updWizBar();if(from===2)$$('aWizContent').innerHTML=agWiz1();else if(from===3)agWizNext(1);else if(from===4)agWizNext(2);}
+function updWizBar(){const s=$$('aWizBar')?.querySelectorAll('.wiz-seg');if(s)s.forEach((el,i)=>{el.className='wiz-seg'+(i<AWZ.step-1?' done':i===AWZ.step-1?' on':'');});}
+function agSubmit(){
+  const fn=$$('aw-fn')?.value||'New';const ln=$$('aw-ln')?.value||'Client';
+  const dob=$$('aw-dob')?.value;const age=dob?Math.max(16,Math.min(30,Math.floor((new Date()-new Date(dob))/31557600000))):21;
+  const tc=$$('awTC')?.querySelector('.chip.on');const telem=!tc||tc.dataset.v!=='no';
+  const id='SUB-2025-'+String(Math.floor(Math.random()*900+100));
+  const ns={id,ins:`${fn} ${ln}`,agent:'chen',age,body:$$('aw-body')?.value||'sedan',acv:parseInt($$('aw-acv')?.value||22000),
+    atFault:parseInt($$('aw-af')?.value||0),minorV:parseInt($$('aw-mv')?.value||0),majorV:$$('aw-maj')?.value||'none',
+    credit:parseInt($$('aw-cr')?.value||700),miles:parseInt($$('aw-mi')?.value||12000),telem,trs:null,
+    stage:'submitted',selCarrier:null,selQ:null,polNum:null,effDate:null,expDate:null,cqs:[]};
+  S.subs.unshift(ns);
+  addCompliance(id,ns.ins,'Application submitted','By Sarah Chen — Chen Insurance Group','Agent','Sarah Chen');
+  showOv('Submitting to BridgePoint MGA…','Marketing to '+CARRIERS.length+' carriers');
+  setTimeout(()=>{
+    const r=ratePolicy({age:ns.age,atFault:ns.atFault,minorV:ns.minorV,majorV:ns.majorV,credit:ns.credit,miles:ns.miles,body:ns.body,acv:ns.acv,telem:ns.telem,trs:72,biLim:25,pdLim:25,pipOpt:'full',umOpt:'25',compOpt:500,collOpt:500,mgaComm:15,agentSplit:12});
+    ns.cqs=CARRIERS.map(c=>carrierQuote(c,r,id.slice(-3)));
+    const best=(ns.cqs||[]).filter(q=>!q.declined).sort((a,b)=>a.prem-b.prem)[0];
+    if(best){ns.selCarrier=best.carrierId;ns.selQ=best;ns.stage='offered';}else ns.stage='quoted';
+    addCompliance(id,ns.ins,'Quotes received','Best: '+(best?fmtC(best.prem)+' via '+best.carrierName:'No markets responded'),'MGA','Victoria Chen');
+    hideOv();updateSbCounters();showToast('Quotes received — check pipeline','green');nav('a-dashboard');
+  },3000);
+}
+
+// ═══ CUSTOMER MODE ═══
+let CW={step:1,trs:72,enrolled:true};
+function launchCustomer(){
+  CW={step:1,trs:72,enrolled:true};
+  $$('custContent').innerHTML=buildCustWiz();
+  cwGoStep(1);
+  const sel=$$('cw-yr');if(sel&&!sel.options.length){const cy=new Date().getFullYear();for(let y=cy+1;y>=2000;y--){const o=document.createElement('option');o.value=y;o.textContent=y;sel.appendChild(o);}}
+}
+function buildCustWiz(){
+  return`<div style="display:flex;gap:3px;margin-bottom:1.125rem" id="cwBar"></div>
+  <div class="wiz-pane" id="cw-1">
+    <div style="background:linear-gradient(135deg,#0C1A2E,#1B3A6B 60%,#2D5A9E);border-radius:var(--rx);padding:1.875rem;color:#fff;margin-bottom:1.125rem">
+      <div style="font-family:var(--serif);font-size:27px;margin-bottom:.5rem">Get your <span style="color:#60A5FA">instant</span> auto quote</div>
+      <div style="font-size:13px;opacity:.78">ZIP 33545 · FL · Ages 16–30 · AI underwriting · Save up to 28% with telematics</div>
+    </div>
+    <div class="card"><div class="fr c2">
+      <div class="fg"><label class="fl">ZIP code</label><input type="text" id="cw-zip" value="33545" maxlength="5"><div class="ferr" id="cwe-zip">5-digit ZIP</div></div>
+      <div class="fg"><label class="fl">Your age</label><select id="cw-age">${[...Array(15)].map((_,i)=>`<option value="${16+i}">${16+i} yrs old</option>`).join('')}</select></div>
+    </div>
+    <div class="fg" style="margin-top:.5rem"><label class="fl" style="margin-bottom:.4rem;display:block">Telematics enrollment — save up to 28%</label>
+      <div class="chips" id="cwTC"><button class="chip on" data-v="yes" onclick="sChip('cwTC',this);CW.enrolled=true">Yes — enroll for savings</button><button class="chip" data-v="no" onclick="sChip('cwTC',this);CW.enrolled=false">Traditional only</button></div>
+    </div>
+    <label class="chk-row on" id="cw-cr" style="margin-top:.75rem" onclick="this.querySelector('input').checked=!this.querySelector('input').checked;this.classList.toggle('on',this.querySelector('input').checked)">
+      <input type="checkbox" id="cw-consent" checked>
+      <div class="chk-txt"><strong>I consent to data collection (FL §627.7281)</strong><small>Authorize use for quote including driving history and telematics.</small></div>
+    </label>
+    <div class="ferr" id="cwe-consent">Consent required</div></div>
+    <div class="wiz-nav"><div></div><button class="btn btn-primary" onclick="cwStep1()">Start my quote →</button></div>
+  </div>
+  <div class="wiz-pane" id="cw-2">
+    <div class="card"><div class="card-hd">About you</div>
+      <div class="fr c2">
+        <div class="fg"><label class="fl">First name</label><input type="text" id="cw-fn"><div class="ferr" id="cwe-fn">Required</div></div>
+        <div class="fg"><label class="fl">Last name</label><input type="text" id="cw-ln"><div class="ferr" id="cwe-ln">Required</div></div>
+        <div class="fg"><label class="fl">Date of birth</label><input type="date" id="cw-dob"><div class="ferr" id="cwe-dob">Age 16–30</div></div>
+        <div class="fg"><label class="fl">Email</label><input type="email" id="cw-email"><div class="ferr" id="cwe-email">Valid email</div></div>
+        <div class="fg"><label class="fl">At-fault accidents (3yr)</label><select id="cw-af"><option value="0">0</option><option value="1">1</option><option value="2">2+</option></select></div>
+        <div class="fg"><label class="fl">Major violations</label><select id="cw-maj"><option value="none">None</option><option value="reckless">Reckless</option><option value="dui">DUI</option></select></div>
+        <div class="fg"><label class="fl">Credit band</label><select id="cw-cr"><option value="800">800+</option><option value="750">750–799</option><option value="700" selected>700–749</option><option value="650">650–699</option><option value="600">Below 650</option></select></div>
+        <div class="fg"><label class="fl">Good student (GPA 3.0+)</label><select id="cw-gs"><option value="no">No</option><option value="yes">Yes — 8% discount</option></select></div>
+      </div>
+    </div>
+    <div class="wiz-nav"><button class="btn btn-ghost" onclick="cwGoStep(1)">← Back</button><button class="btn btn-primary" onclick="cwStep2()">Next: Vehicle →</button></div>
+  </div>
+  <div class="wiz-pane" id="cw-3">
+    <div class="card"><div class="card-hd">Your vehicle</div>
+      <div class="fr c3"><div class="fg"><label class="fl">Year</label><select id="cw-yr"><option value="">Select…</option></select><div class="ferr" id="cwe-yr">Required</div></div>
+        <div class="fg"><label class="fl">Make</label><select id="cw-mk"><option value="">Select…</option><option>Honda</option><option>Toyota</option><option>Ford</option><option>Chevrolet</option><option>Nissan</option><option>Subaru</option><option>Other</option></select><div class="ferr" id="cwe-mk">Required</div></div>
+        <div class="fg"><label class="fl">Model</label><input type="text" id="cw-model" placeholder="e.g. Civic"><div class="ferr" id="cwe-model">Required</div></div></div>
+      <div class="fr c2"><div class="fg"><label class="fl">Body type</label><select id="cw-body"><option value="sedan">Sedan/Coupe</option><option value="suv">SUV</option><option value="truck">Truck</option><option value="sport">Sport</option></select></div>
+        <div class="fg"><label class="fl">Est. value</label><select id="cw-acv"><option value="10000">Under $12k</option><option value="22000" selected>$12k–$26k</option><option value="30000">$26k–$35k</option><option value="42000">$35k–$50k</option></select></div></div>
+      <div class="fg"><label class="fl">Annual mileage</label><div class="sl-row"><span style="font-size:11px;color:var(--muted)">1k</span><input type="range" id="cw-mi" min="1000" max="30000" step="500" value="12000" oninput="$$('cw-miV').textContent=parseInt(this.value).toLocaleString()+' mi/yr'"><span style="font-size:11px;color:var(--muted)">30k</span><span class="sl-val" id="cw-miV">12,000 mi/yr</span></div></div>
+    </div>
+    <div class="wiz-nav"><button class="btn btn-ghost" onclick="cwGoStep(2)">← Back</button><button class="btn btn-primary" onclick="cwStep3()">Next: Coverage →</button></div>
+  </div>
+  <div class="wiz-pane" id="cw-4">
+    <div class="card"><div class="card-hd">Coverage &amp; telematics<div style="font-family:var(--serif);font-size:19px;color:var(--ink)" id="cwLP">$—</div></div>
+      <div class="cov-row"><div class="cov-info"><div class="cov-name">Bodily Injury</div></div><div class="cov-ctl"><select id="cw-bi" onchange="cwRecalc()"><option value="10">$10k/$20k</option><option value="25" selected>$25k/$50k</option><option value="50">$50k/$100k</option></select><span class="cov-price" id="cwp-bi">—</span></div></div>
+      <div class="cov-row"><div class="cov-info"><div class="cov-name">PD</div></div><div class="cov-ctl"><select id="cw-pd" onchange="cwRecalc()"><option value="10">$10k</option><option value="25" selected>$25k</option></select><span class="cov-price" id="cwp-pd">—</span></div></div>
+      <div class="cov-row"><div class="cov-info"><div class="cov-name">PIP <span class="cov-req">FL Req</span></div></div><div class="cov-ctl"><select id="cw-pip" onchange="cwRecalc()"><option value="full">$10k Full</option><option value="medonly">$10k Med Only</option></select><span class="cov-price" id="cwp-pip">—</span></div></div>
+      <div class="cov-row"><div class="cov-info"><div class="cov-name">UM/UIM</div></div><div class="cov-ctl"><select id="cw-um" onchange="cwRecalc()"><option value="none">None</option><option value="25" selected>$25k/$50k</option></select><span class="cov-price" id="cwp-um">—</span></div></div>
+      <div class="cov-row"><div class="cov-info"><div class="cov-name">Comprehensive</div></div><div class="cov-ctl"><select id="cw-comp" onchange="cwRecalc()"><option value="none">None</option><option value="500" selected>ACV/$500</option></select><span class="cov-price" id="cwp-comp">—</span></div></div>
+      <div class="cov-row"><div class="cov-info"><div class="cov-name">Collision</div></div><div class="cov-ctl"><select id="cw-coll" onchange="cwRecalc()"><option value="none">None</option><option value="500" selected>ACV/$500</option></select><span class="cov-price" id="cwp-coll">—</span></div></div>
+    </div>
+    ${`<div class="card"><div class="card-hd">Your driving behavior <span style="font-size:11px;color:var(--green);background:var(--glt);padding:2px 8px;border-radius:10px;margin-left:6px;font-weight:600">Save up to 28%</span></div>
+      <div class="fr c2" style="gap:.5rem">
+        <div class="fg"><label class="fl">Speeding %</label><div class="sl-row"><input type="range" id="cw-tsp" min="0" max="30" value="5" oninput="cwCalcTRS()"><span class="sl-val" id="cwv-tsp">5%</span></div></div>
+        <div class="fg"><label class="fl">Harsh braking /100mi</label><div class="sl-row"><input type="range" id="cw-tbr" min="0" max="12" step=".5" value="3" oninput="cwCalcTRS()"><span class="sl-val" id="cwv-tbr">3.0</span></div></div>
+        <div class="fg"><label class="fl">Night driving %</label><div class="sl-row"><input type="range" id="cw-tni" min="0" max="35" value="5" oninput="cwCalcTRS()"><span class="sl-val" id="cwv-tni">5%</span></div></div>
+        <div class="fg"><label class="fl">Phone usage %</label><div class="sl-row"><input type="range" id="cw-tph" min="0" max="40" value="5" oninput="cwCalcTRS()"><span class="sl-val" id="cwv-tph">5%</span></div></div>
+      </div>
+      <div id="cwTRSOut" style="margin-top:.5rem"></div>
+    </div>`}
+    <div class="wiz-nav"><button class="btn btn-ghost" onclick="cwGoStep(3)">← Back</button><button class="btn btn-green btn-lg" onclick="cwRunQuote()">Calculate my quote →</button></div>
+  </div>
+  <div class="wiz-pane" id="cw-5"><div id="cwResult"></div></div>`;
+}
+function cwGoStep(n){
+  document.querySelectorAll('.wiz-pane').forEach(p=>{if(p.closest('#custContent')){p.classList.remove('on');p.style.display='none';}});
+  const t=$$('cw-'+n);if(t){t.classList.add('on');t.style.display='block';}
+  CW.step=n;
+  const bar=$$('cwBar');if(bar)bar.innerHTML=[...Array(5)].map((_,i)=>`<div class="wiz-seg ${i<n-1?'done':i===n-1?'on':''}"></div>`).join('');
+  if(n===4){cwCalcTRS();cwRecalc();}
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+function cwStep1(){const zip=$$('cw-zip')?.value||'';const ok1=/^\d{5}$/.test(zip);const ok2=$$('cw-consent')?.checked;$$('cwe-zip').classList.toggle('on',!ok1);$$('cwe-consent').classList.toggle('on',!ok2);if(ok1&&ok2)cwGoStep(2);}
+function cwStep2(){
+  let ok=true;
+  ['fn','ln'].forEach(f=>{const v=$$('cw-'+f)?.value?.trim();const e=$$('cwe-'+f);if(!v){if(e)e.classList.add('on');ok=false;}else if(e)e.classList.remove('on');});
+  const em=$$('cw-email')?.value||'';const ee=$$('cwe-email');if(!em.includes('@')){if(ee)ee.classList.add('on');ok=false;}else if(ee)ee.classList.remove('on');
+  const dob=$$('cw-dob')?.value;const de=$$('cwe-dob');if(dob){const age=Math.floor((new Date()-new Date(dob))/31557600000);if(age<16||age>30){if(de)de.classList.add('on');ok=false;}else if(de)de.classList.remove('on');$$('cw-age').value=String(Math.max(16,Math.min(30,age)));}else{if(de)de.classList.add('on');ok=false;}
+  if(ok)cwGoStep(3);
+}
+function cwStep3(){let ok=true;['yr','mk','model'].forEach(f=>{const v=$$('cw-'+f)?.value?.trim();const e=$$('cwe-'+f);if(!v){if(e)e.classList.add('on');ok=false;}else if(e)e.classList.remove('on');});if(ok)cwGoStep(4);}
+function getCWP(){const age=parseInt($$('cw-age')?.value||19);return{age,atFault:parseInt($$('cw-af')?.value||0),minorV:0,majorV:$$('cw-maj')?.value||'none',goodStud:$$('cw-gs')?.value==='yes',defDrive:false,sr22:false,credit:parseInt($$('cw-cr')?.value||700),miles:parseInt($$('cw-mi')?.value||12000),body:$$('cw-body')?.value||'sedan',acv:parseInt($$('cw-acv')?.value||22000),telem:CW.enrolled,trs:CW.trs||72,biLim:parseInt($$('cw-bi')?.value||25),pdLim:parseInt($$('cw-pd')?.value||25),pipOpt:$$('cw-pip')?.value||'full',umOpt:$$('cw-um')?.value||'none',compOpt:$$('cw-comp')?.value==='none'?'none':parseInt($$('cw-comp')?.value||500),collOpt:$$('cw-coll')?.value==='none'?'none':parseInt($$('cw-coll')?.value||500),mgaComm:15,agentSplit:12};}
+function cwRecalc(){try{const r=ratePolicy(getCWP());const lp=$$('cwLP');if(lp)lp.textContent=fmtC(r.total);[['bi',r.bi],['pd',r.pd],['pip',r.pip],['um',r.um],['comp',r.comp],['coll',r.coll]].forEach(([k,v])=>{const el=$$('cwp-'+k);if(el)el.textContent=v===0?'None':fmtC(v);});}catch(e){}}
+function cwCalcTRS(){
+  const sp=parseFloat($$('cw-tsp')?.value||5)/100,br=parseFloat($$('cw-tbr')?.value||3),ni=parseFloat($$('cw-tni')?.value||5)/100,ph=parseFloat($$('cw-tph')?.value||5)/100,mi=parseInt($$('cw-mi')?.value||12000);
+  if($$('cwv-tsp'))$$('cwv-tsp').textContent=(sp*100).toFixed(0)+'%';if($$('cwv-tbr'))$$('cwv-tbr').textContent=br.toFixed(1);if($$('cwv-tni'))$$('cwv-tni').textContent=(ni*100).toFixed(0)+'%';if($$('cwv-tph'))$$('cwv-tph').textContent=(ph*100).toFixed(0)+'%';
+  CW.trs=calcTRS(sp,br,ni,ph,mi);
+  const col=CW.trs>=85?'var(--green)':CW.trs>=70?'var(--blue)':CW.trs>=60?'var(--amber)':'var(--red)';
+  const bands=['Preferred+','Preferred','Preferred','Standard+','Standard','Substandard','High Risk'];
+  const bi=trsI(CW.trs);const ci=TBI[bi];const d=((1-ci)*100).toFixed(0);
+  const el=$$('cwTRSOut');
+  if(el)el.innerHTML=`<div style="display:flex;align-items:center;gap:10px;padding:.5rem;border-radius:var(--r);background:${CW.trs>=85?'var(--glt)':CW.trs>=70?'var(--bdim)':'var(--alt)'}">
+    <div style="font-family:var(--serif);font-size:24px;color:${col};min-width:44px;text-align:center">${Math.round(CW.trs)}</div>
+    <div><div style="font-size:12.5px;font-weight:600;color:${col}">${bands[bi]} — TRS ${Math.round(CW.trs)}/100</div>
+    <div style="font-size:11px;color:var(--muted)">${parseFloat(d)>0?'−'+d+'% BI discount':parseFloat(d)<0?'+'+Math.abs(d)+'% surcharge':'Neutral'} · factor ${ci.toFixed(2)}×</div></div></div>`;
+  cwRecalc();
+}
+function cwRunQuote(){
+  showOv('Running underwriting engine…','Applying FL actuarial factors');
+  setTimeout(()=>{
+    hideOv();const r=ratePolicy(getCWP());
+    const fn=$$('cw-fn')?.value||'';const ln=$$('cw-ln')?.value||'';
+    const tc=r.tier.toLowerCase();
+    const qs=CARRIERS.map(c=>carrierQuote(c,r,'CW'+Date.now().toString().slice(-3)));
+    const acc=qs.filter(q=>!q.declined).sort((a,b)=>a.prem-b.prem);
+    const covs=[['Bodily Injury',r.bi],['Property Damage',r.pd],['PIP',r.pip],['UM/UIM',r.um],['Comprehensive',r.comp],['Collision',r.coll]].filter(c=>c[1]>0);
+    $$('cwResult').innerHTML=`
+      <div style="background:linear-gradient(135deg,#0C1A2E,#1B3A6B 60%,#2D5A9E);color:#fff;border-radius:var(--rx);padding:1.625rem;text-align:center;margin-bottom:1rem">
+        <span class="badge ${tc}" style="margin-bottom:.625rem">${r.tier} Driver</span>
+        ${fn?`<div style="font-size:12.5px;opacity:.7;margin-bottom:.375rem">${fn} ${ln}</div>`:''}
+        <div style="font-family:var(--serif);font-size:42px;line-height:1">${fmtC(r.total)}</div>
+        <div style="font-size:13.5px;opacity:.7;margin-top:3px">per year · ${fmtC(r.total/12)}/month</div>
+        ${CW.enrolled&&CW.trs>=70?`<div style="margin-top:9px;background:rgba(52,211,153,.15);border:1px solid rgba(52,211,153,.35);padding:4px 14px;border-radius:20px;display:inline-block;font-size:12px">Your driving saves ~${fmtC(r.total*0.15)}/yr vs traditional</div>`:''}
+        <div style="font-size:10.5px;font-family:'Courier New',monospace;background:rgba(255,255,255,.12);padding:2px 9px;border-radius:4px;margin-top:6px;display:inline-block">${r.classCode}</div>
+      </div>
+      <div class="card"><div class="card-hd">Coverage breakdown</div>
+        <table class="tbl"><thead><tr><th>Coverage</th><th style="text-align:right">Annual</th></tr></thead>
+        <tbody>${covs.map(([n,v])=>`<tr><td>${n}</td><td style="text-align:right;font-weight:500">${fmtC(v)}</td></tr>`).join('')}
+        <tr style="font-weight:700;border-top:2px solid var(--mid)"><td>Total (incl. FL tax + fees)</td><td style="text-align:right">${fmtC(r.total)}</td></tr></tbody></table>
+      </div>
+      ${acc.length?`<div class="card"><div class="card-hd">Available via BridgePoint MGA — best markets</div>
+        <table class="tbl"><thead><tr><th>Carrier</th><th>Tier</th><th>Annual</th></tr></thead>
+        <tbody>${acc.map(q=>`<tr><td>${q.carrierName}</td><td><span class="badge ${q.tier.toLowerCase()}">${q.tier}</span></td><td style="font-weight:600">${fmtC(q.prem)}</td></tr>`).join('')}</tbody></table></div>`:''}
+      <div class="ibox blue" style="margin-top:.625rem"><svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a.75.75 0 000 1.5h.253a.25.25 0 01.244.304l-.459 2.066A1.75 1.75 0 0010.747 15H11a.75.75 0 000-1.5h-.253a.25.25 0 01-.244-.304l.459-2.066A1.75 1.75 0 009.253 9H9z" clip-rule="evenodd"/></svg><span>Quote valid 30 days · Ref: AQ-${Date.now().toString(36).toUpperCase()} · Contact a licensed FL agent to bind.</span></div>
+      <div style="display:flex;gap:7px;flex-wrap:wrap;margin-top:.875rem">
+        <button class="btn btn-primary btn-lg" onclick="showToast('Quote emailed!','green')" style="flex:2;justify-content:center">Email my quote</button>
+        <button class="btn btn-outline" onclick="window.print()" style="flex:1;justify-content:center">Print PDF</button>
+        <button class="btn btn-ghost" onclick="cwGoStep(1)" style="flex:1;justify-content:center">Start over</button>
+      </div>`;
+    cwGoStep(5);
+  },2600);
+}
+
+// ═══ MODE GATE ═══
+function enterMode(mode){
+  S.mode=mode;
+  $$('gate').style.display='none';
+  $$('app').classList.add('on');
+  const chip=$$('mChip');
+  chip.textContent=mode==='mga'?'MGA / Wholesaler':mode==='agent'?'Retail Agent':'Customer';
+  chip.className='m-chip '+(mode==='mga'?'mga':mode==='agent'?'agent':'cust');
+  $$('tbUser').textContent=mode==='mga'?S.mgaUser:mode==='agent'?S.agentUser:'Guest';
+  const mgaSb=$$('mgaSb'),agSb=$$('agentSb'),mgaN=$$('mgaNav'),agN=$$('agentNav');
+  mgaSb.style.display=mode==='mga'?'flex':'none';
+  agSb.style.display=mode==='agent'?'flex':'none';
+  mgaN.style.display=mode==='mga'?'flex':'none';
+  agN.style.display=mode==='agent'?'flex':'none';
+  if(mode==='mga'){
+    $$('mgaNav').style.display='flex';
+    // Init wizard bars
+    const wb=$$('aWizBar');if(wb)wb.innerHTML=[...Array(4)].map((_,i)=>`<div class="wiz-seg ${i===0?'on':''}"></div>`).join('');
+    nav('dashboard');
+  } else if(mode==='agent'){
+    $$('agentNav').style.display='flex';
+    const wb=$$('aWizBar');if(wb)wb.innerHTML=[...Array(4)].map((_,i)=>`<div class="wiz-seg ${i===0?'on':''}"></div>`).join('');
+    nav('a-dashboard');
+  } else {
+    nav('customer');launchCustomer();
+  }
+}
+function showGate(){$$('gate').style.display='flex';$$('app').classList.remove('on');}
+function sChip(gid,el){document.querySelectorAll('#'+gid+' .chip').forEach(b=>b.classList.remove('on'));el.classList.add('on');}
+
+// ═══ PWA ═══
+let deferredPrompt=null;
+window.addEventListener('beforeinstallprompt',e=>{e.preventDefault();deferredPrompt=e;$$('instBar').classList.add('on');});
+if('serviceWorker' in navigator)navigator.serviceWorker.register('./sw.js').catch(()=>{});
+
+document.addEventListener('DOMContentLoaded',()=>{
+  seedData();
+  const ib=$$('instBtn');
+  if(ib)ib.addEventListener('click',async()=>{if(!deferredPrompt)return;deferredPrompt.prompt();const{outcome}=await deferredPrompt.userChoice;if(outcome==='accepted')$$('instBar').classList.remove('on');deferredPrompt=null;});
+});
+</script>
+</body>
+</html>
